@@ -1,18 +1,16 @@
 package finalproject.finalproject.service.impl;
 
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.duty.SubDuty;
-import repository.SubDutyRepository;
-import service.SubDutyService;
+import finalproject.finalproject.repository.SubDutyRepository;
+import finalproject.finalproject.service.SubDutyService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-
+@Service
+@RequiredArgsConstructor
 public class SubDutyServiceImpl
-        extends BaseEntityServiceImpl<SubDuty, Integer, SubDutyRepository>
         implements SubDutyService {
+    private final SubDutyRepository subDutyRepository;
 
-    public SubDutyServiceImpl(SubDutyRepository repository) {
-        super(repository);
-    }
 
 }

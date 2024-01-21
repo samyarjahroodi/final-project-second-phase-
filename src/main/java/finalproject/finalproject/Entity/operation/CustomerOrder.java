@@ -1,9 +1,9 @@
-package finalproject.finalproject.model.operation;
+package finalproject.finalproject.Entity.operation;
 
-import finalproject.finalproject.base.entity.BaseEntity;
-import finalproject.finalproject.model.duty.Duty;
-import finalproject.finalproject.model.duty.SubDuty;
-import finalproject.finalproject.model.user.Customer;
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
+import finalproject.finalproject.Entity.duty.Duty;
+import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.user.Customer;
 import jakarta.persistence.*;
 import lombok.*;
 

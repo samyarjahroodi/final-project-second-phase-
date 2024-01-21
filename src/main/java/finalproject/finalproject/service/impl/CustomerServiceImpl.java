@@ -1,21 +1,25 @@
 package finalproject.finalproject.service.impl;
 
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.user.Customer;
-import repository.CustomerRepository;
-import service.CustomerService;
+import finalproject.finalproject.Entity.user.Customer;
+import finalproject.finalproject.repository.CustomerRepository;
+import finalproject.finalproject.service.CustomerService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Service
+@Transactional(readOnly = true)
 public class CustomerServiceImpl
-        extends BaseEntityServiceImpl<Customer, Integer, CustomerRepository>
+        extends PersonServiceImpl<Customer, CustomerRepository>
         implements CustomerService {
+
 
     public CustomerServiceImpl(CustomerRepository repository) {
         super(repository);
     }
 
     @Override
-    public Customer getId(String username, String password) {
-        return repository.getId(username,password);
+    public Customer findByUsernameAndPassword(String username, String password) {
+        return repository.findByUsernameAndPassword(username,password);
     }
 }

@@ -1,8 +1,8 @@
-package finalproject.finalproject.model.duty;
+package finalproject.finalproject.Entity.duty;
 
-import finalproject.finalproject.base.entity.BaseEntity;
-import finalproject.finalproject.model.operation.CustomerOrder;
-import finalproject.finalproject.model.user.Expert;
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.user.Expert;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,7 +32,7 @@ public class SubDuty extends BaseEntity<Integer> {
     @JoinTable(name = "SubDuty_expert")
     private List<Expert> experts;
 
-    @OneToMany(mappedBy = "duty")
+    @OneToMany(mappedBy = "subDuty")
     private List<CustomerOrder> orders;
 
     @Override

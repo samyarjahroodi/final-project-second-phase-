@@ -1,7 +1,7 @@
-package finalproject.finalproject.model.operation;
+package finalproject.finalproject.Entity.operation;
 
-import finalproject.finalproject.base.entity.BaseEntity;
-import finalproject.finalproject.model.user.Expert;
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
+import finalproject.finalproject.Entity.user.Expert;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;

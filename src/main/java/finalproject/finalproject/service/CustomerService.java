@@ -1,8 +1,8 @@
 package finalproject.finalproject.service;
 
 
-import finalproject.finalproject.model.user.Customer;
+import finalproject.finalproject.Entity.user.Customer;
 
 public interface CustomerService extends PersonService<Customer> {
-    Customer getId(String username, String password);
+    Customer findByUsernameAndPassword(String username, String password);
 }

@@ -1,6 +1,6 @@
 package finalproject.finalproject.repository;
 
-import finalproject.finalproject.model.user.Person;
+import finalproject.finalproject.Entity.user.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

@@ -1,4 +1,4 @@
-package finalproject.finalproject.model.user;
+package finalproject.finalproject.Entity.user;
 
 import jakarta.persistence.Entity;
 import lombok.*;

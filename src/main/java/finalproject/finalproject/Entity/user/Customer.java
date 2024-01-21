@@ -1,7 +1,7 @@
-package finalproject.finalproject.model.user;
+package finalproject.finalproject.Entity.user;
 
-import finalproject.finalproject.model.operation.CustomerOrder;
-import finalproject.finalproject.model.utility.Wallet;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.utility.Wallet;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;

@@ -1,6 +1,6 @@
-package finalproject.finalproject.model.operation;
+package finalproject.finalproject.Entity.operation;
 
-import finalproject.finalproject.base.entity.BaseEntity;
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Max;

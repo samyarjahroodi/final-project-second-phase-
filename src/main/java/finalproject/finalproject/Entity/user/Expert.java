@@ -1,7 +1,7 @@
-package finalproject.finalproject.model.user;
+package finalproject.finalproject.Entity.user;
 
-import finalproject.finalproject.model.operation.Suggestion;
-import finalproject.finalproject.model.utility.Wallet;
+import finalproject.finalproject.Entity.operation.Suggestion;
+import finalproject.finalproject.Entity.utility.Wallet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -29,7 +29,7 @@ public class Expert extends Person {
     //image of the expert!!
     @Lob
     @Column(name = "image_of_expert", nullable = false)
-    @Type(type = "org.hibernate.type.ImageType")
+    //@Type(type = "org.hibernate.type.ImageType")
     private byte[] image;
 
     @Max(5)

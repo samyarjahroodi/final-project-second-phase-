@@ -1,16 +1,15 @@
 package finalproject.finalproject.service.impl;
 
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.operation.Suggestion;
-import repository.SuggestionRepository;
-import service.SuggestionService;
+import finalproject.finalproject.repository.SuggestionRepository;
+import finalproject.finalproject.service.SuggestionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class SuggestionServiceImpl
-        extends BaseEntityServiceImpl<Suggestion, Integer, SuggestionRepository>
         implements SuggestionService {
+    private final SuggestionRepository suggestionRepository;
 
-    public SuggestionServiceImpl(SuggestionRepository repository) {
-        super(repository);
-    }
 }

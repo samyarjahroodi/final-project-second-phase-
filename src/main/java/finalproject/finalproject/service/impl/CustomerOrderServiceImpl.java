@@ -1,16 +1,15 @@
 package finalproject.finalproject.service.impl;
 
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.operation.CustomerOrder;
-import repository.CustomerOrderRepository;
-import service.CustomerOrderService;
+import finalproject.finalproject.repository.CustomerOrderRepository;
+import finalproject.finalproject.service.CustomerOrderService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class CustomerOrderServiceImpl
-        extends BaseEntityServiceImpl<CustomerOrder, Integer, CustomerOrderRepository>
         implements CustomerOrderService {
+    private final CustomerOrderRepository customerOrderRepository;
 
-    public CustomerOrderServiceImpl(CustomerOrderRepository repository) {
-        super(repository);
-    }
 }

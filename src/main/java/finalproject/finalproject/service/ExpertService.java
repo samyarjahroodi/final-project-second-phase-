@@ -1,8 +1,7 @@
 package finalproject.finalproject.service;
 
 
-import finalproject.finalproject.base.service.BaseEntityService;
-import finalproject.finalproject.model.user.Expert;
+import finalproject.finalproject.Entity.user.Expert;
 import org.springframework.stereotype.Service;
 
 @Service

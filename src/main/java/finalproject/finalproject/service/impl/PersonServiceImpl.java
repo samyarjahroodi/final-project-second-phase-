@@ -1,15 +1,16 @@
 package finalproject.finalproject.service.impl;
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.user.Person;
-import repository.PersonRepository;
-import service.PersonService;
+import finalproject.finalproject.Entity.user.Person;
+import finalproject.finalproject.repository.PersonRepository;
+import finalproject.finalproject.service.PersonService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
-        extends BaseEntityServiceImpl<T, Integer, R>
         implements PersonService<T> {
+    protected final R repository;
 
-    public PersonServiceImpl(R repository) {
-        super(repository);
-    }
+
 }

@@ -1,25 +1,24 @@
 package finalproject.finalproject.service.impl;
 
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.duty.Duty;
-import entity.duty.SubDuty;
-import repository.DutyRepository;
-import service.DutyService;
+import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.repository.DutyRepository;
+import finalproject.finalproject.service.DutyService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@RequiredArgsConstructor
 public class DutyServiceImpl
-        extends BaseEntityServiceImpl<Duty, Integer, DutyRepository>
         implements DutyService {
 
-    public DutyServiceImpl(DutyRepository repository) {
-        super(repository);
-    }
+    private final DutyRepository dutyRepository;
 
 
     @Override
     public List<SubDuty> showSubDutiesOfSpecificDuty(Integer id) {
-        return repository.showSubDutiesOfSpecificDuty(id);
+        return dutyRepository.showSubDutiesOfSpecificDuty(id);
     }
 }

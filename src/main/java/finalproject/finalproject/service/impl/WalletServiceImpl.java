@@ -1,16 +1,14 @@
 package finalproject.finalproject.service.impl;
 
+import finalproject.finalproject.repository.WalletRepository;
+import finalproject.finalproject.service.WalletService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.utility.Wallet;
-import repository.WalletRepository;
-import service.WalletService;
-
+@Service
+@RequiredArgsConstructor
 public class WalletServiceImpl
-        extends BaseEntityServiceImpl<Wallet, Integer, WalletRepository>
         implements WalletService {
+    private final WalletRepository walletRepository;
 
-    public WalletServiceImpl(WalletRepository repository) {
-        super(repository);
-    }
 }

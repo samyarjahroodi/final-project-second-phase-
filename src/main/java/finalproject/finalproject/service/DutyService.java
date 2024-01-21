@@ -1,13 +1,10 @@
 package finalproject.finalproject.service;
 
 
-import finalproject.finalproject.base.service.BaseEntityService;
-import finalproject.finalproject.model.duty.Duty;
-import finalproject.finalproject.model.duty.SubDuty;
-import org.springframework.stereotype.Service;
+import finalproject.finalproject.Entity.duty.SubDuty;
 
 import java.util.List;
-public interface DutyService extends BaseEntityService<Duty, Integer> {
+public interface DutyService {
     List<SubDuty> showSubDutiesOfSpecificDuty(Integer id);
 
 }

@@ -10,8 +10,5 @@ public class FinalProjectApplication {
         SpringApplication.run(FinalProjectApplication.class, args);
     }
 
-    public void testUnit() {
-        System.out.println("hello world");
-    }
 
 }

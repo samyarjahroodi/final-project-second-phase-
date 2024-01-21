@@ -1,16 +1,15 @@
 package finalproject.finalproject.service.impl;
 
 
-import base.service.Impl.BaseEntityServiceImpl;
-import entity.user.Expert;
-import entity.user.RegistrationStatus;
-import repository.ExpertRepository;
-import service.ExpertService;
+import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.Entity.user.RegistrationStatus;
+import finalproject.finalproject.repository.ExpertRepository;
+import finalproject.finalproject.service.ExpertService;
 
 import java.util.Optional;
 
 public class ExpertServiceImpl
-        extends BaseEntityServiceImpl<Expert, Integer, ExpertRepository>
+        extends PersonServiceImpl<Expert, ExpertRepository>
         implements ExpertService {
 
     public ExpertServiceImpl(ExpertRepository repository) {
@@ -29,7 +28,7 @@ public class ExpertServiceImpl
             if (byId.isPresent()) {
                 Expert expert = byId.get();
                 expert.setRegistrationStatus(RegistrationStatus.ACCEPTED);
-                repository.saveOrUpdate(expert);
+                repository.save(expert);
             } else {
                 System.err.println("Expert not found : ");
             }

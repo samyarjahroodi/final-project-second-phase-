@@ -1,4 +1,4 @@
-package finalproject.finalproject.model.utility;//package entity.user;
+package finalproject.finalproject.Entity.utility;//package entity.user;
 //
 //
 //import base.entity.BaseEntity;

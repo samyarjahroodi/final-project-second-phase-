@@ -1,10 +1,11 @@
 package finalproject.finalproject.repository;
 
 
-import finalproject.finalproject.model.user.Customer;
+import finalproject.finalproject.Entity.user.Customer;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends PersonRepository<Customer> {
-    Customer getId(String username, String password);
+public interface CustomerRepository
+        extends PersonRepository<Customer> {
+    Customer findByUsernameAndPassword(String username, String password);
 }

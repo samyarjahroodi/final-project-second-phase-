@@ -1,6 +1,6 @@
-package finalproject.finalproject.model.user;
+package finalproject.finalproject.Entity.user;
 
-import finalproject.finalproject.base.entity.BaseEntity;
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

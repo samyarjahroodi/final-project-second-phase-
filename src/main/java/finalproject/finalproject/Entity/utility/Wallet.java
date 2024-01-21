@@ -1,6 +1,6 @@
-package finalproject.finalproject.model.utility;
+package finalproject.finalproject.Entity.utility;
 
-import finalproject.finalproject.base.entity.BaseEntity;
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 

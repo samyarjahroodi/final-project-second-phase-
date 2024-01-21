@@ -1,4 +1,4 @@
-package finalproject.finalproject.model.operation;
+package finalproject.finalproject.Entity.operation;
 
 public enum Status {
     WAITING_FOR_THE_SUGGESTION_OF_EXPERTS,
