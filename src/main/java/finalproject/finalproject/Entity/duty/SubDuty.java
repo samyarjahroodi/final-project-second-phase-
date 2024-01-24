@@ -21,7 +21,7 @@ public class SubDuty extends BaseEntity<Integer> {
 
     private String description;
 
-    private Integer price;
+    private double price;
 
     @ManyToOne
     @JoinColumn(nullable = false)

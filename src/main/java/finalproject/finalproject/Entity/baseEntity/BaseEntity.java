@@ -19,12 +19,5 @@ import java.io.Serializable;
 public class BaseEntity<ID extends Serializable> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private ID id;
-
-    @Override
-    public String toString() {
-        return "BaseEntity{" +
-                "id=" + id +
-                '}';
-    }
+    public ID id;
 }

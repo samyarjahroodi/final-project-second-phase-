@@ -29,7 +29,6 @@ public class Expert extends Person {
     //image of the expert!!
     @Lob
     @Column(name = "image_of_expert", nullable = false)
-    //@Type(type = "org.hibernate.type.ImageType")
     private byte[] image;
 
     @Max(5)
@@ -41,6 +40,5 @@ public class Expert extends Person {
 
     @OneToOne
     private Wallet wallet;
-
 
 }

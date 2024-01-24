@@ -3,15 +3,15 @@ package finalproject.finalproject.Entity.duty;
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-//@Builder
-//@AllArgsConstructor
-//@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -19,10 +19,10 @@ import java.util.List;
 public class Duty extends BaseEntity<Integer> {
     private String name;
 
-    @OneToMany(mappedBy = "duty")
+    @OneToMany(mappedBy = "duty", fetch = FetchType.EAGER)
     private List<SubDuty> subDuties;
 
-    @OneToMany(mappedBy = "duty")
+    @OneToMany(mappedBy = "duty", fetch = FetchType.EAGER)
     private List<CustomerOrder> orders;
 
     @Override

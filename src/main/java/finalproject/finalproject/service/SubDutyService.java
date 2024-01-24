@@ -1,5 +1,7 @@
 package finalproject.finalproject.service;
 
-public interface SubDutyService {
+import finalproject.finalproject.Entity.duty.SubDuty;
 
+public interface SubDutyService {
+    SubDuty saveSubDuty(SubDuty SubDuty);
 }

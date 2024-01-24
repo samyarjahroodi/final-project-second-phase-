@@ -1,6 +1,7 @@
 package finalproject.finalproject.service.impl;
 
 
+import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.repository.DutyRepository;
 import finalproject.finalproject.service.DutyService;
@@ -17,8 +18,12 @@ public class DutyServiceImpl
     private final DutyRepository dutyRepository;
 
 
+    public List<Duty> showDuties() {
+        return dutyRepository.findAll();
+    }
+
     @Override
-    public List<SubDuty> showSubDutiesOfSpecificDuty(Integer id) {
-        return dutyRepository.showSubDutiesOfSpecificDuty(id);
+    public List<SubDuty> showSubDutiesOfSpecificDuty(Duty duty) {
+        return dutyRepository.showSubDutiesOfSpecificDuty(duty);
     }
 }
