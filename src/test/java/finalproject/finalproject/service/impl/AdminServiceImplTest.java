@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +34,7 @@ class AdminServiceImplTest extends BaseTest {
     @Order(1)
     void createDutyForTest() {
         Duty duty = createDuty();
+
         assertEquals("home maintenance", duty.getName());
     }
 
@@ -89,7 +91,7 @@ class AdminServiceImplTest extends BaseTest {
     void deleteSubDutyFromTheExistDuty() throws IOException {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(2000);
-        adminService.addSubDutyToDutyByAdmin(duty, subDuty);
+        adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         adminService.deleteSubDutyFromTheExistDuty(subDuty);
         assertEquals(null, subDuty.getDuty());
     }

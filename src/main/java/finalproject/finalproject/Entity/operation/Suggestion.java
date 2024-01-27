@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
+@ToString
 public class Suggestion extends BaseEntity<Integer> {
     @Column(name = "suggested_price", nullable = false)
     private int suggestedPrice;

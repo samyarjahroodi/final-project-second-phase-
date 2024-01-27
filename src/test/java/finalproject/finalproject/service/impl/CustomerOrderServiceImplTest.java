@@ -8,13 +8,13 @@ import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.service.dto.CustomerOrderDto;
-import finalproject.finalproject.service.dto.SuggestionDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +33,6 @@ class CustomerOrderServiceImplTest extends BaseTest {
         CustomerOrderDto customerOrderDto = createCustomerOrderDto(3000, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2024, 10, 12), subDuty.getPrice(), duty, subDuty);
         customerOrderService.publishOrder(customer, customerOrderDto, duty, subDuty);
-        //List<CustomerOrder> all = customerOrderRepository.findAll();
         assertEquals(1, customerOrderRepository.findAll().size());
     }
 
@@ -50,6 +49,7 @@ class CustomerOrderServiceImplTest extends BaseTest {
 
     @Test
     void publishOrderWhenThePriceIsLowerThanSubDutyPrice() {
+        //In this method we are checking the price that is lower than expected price for sub duty or not
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(3000);
         Customer customer = createCustomer();
@@ -63,13 +63,14 @@ class CustomerOrderServiceImplTest extends BaseTest {
         Expert expert = createExpert();
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(2000);
-        adminService.addSubDutyToDutyByAdmin(duty, subDuty);
+
+        adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         adminService.addSubDutyToNewExpert(expert, subDuty);
+
+        //creating customer order based on status
         CustomerOrder customerOrder = createCustomerOrder(2500, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2024, 10, 12), subDuty.getPrice(), duty, subDuty);
-        SuggestionDto suggestionDto =
-                createSuggestionDto(2300, LocalDate.now(), LocalDate.of(2024, 10, 12), 10);
-        //suggestionService.createSuggestionForExpert(expert, suggestionDto, customerOrder);
+
         customerOrderRepository.save(customerOrder);
         List<CustomerOrder> customerOrders = customerOrderService.showCustomerOrdersToExpertBasedOnCustomerOrderStatus(expert);
         assertEquals(1, customerOrders.size());
@@ -78,32 +79,80 @@ class CustomerOrderServiceImplTest extends BaseTest {
     @Test
     void showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions() {
 
-    }
-
-/*    @Test
-    void showCustomerOrderOfSpecificCustomerBasedOnStarOfExpert() throws IOException {
-        Expert expert = createExpert();
-        expert.setStar(3.7);
-        expertRepository.save(expert);
-        Expert expert1 = createExpert();
-        expert1.setUsername("sajad");
-        expert1.setEmail("sajad@example.com");
-        expertRepository.save(expert1);
-        expert1.setStar(4.1);
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(2000);
         Customer customer = createCustomer();
-        adminService.addSubDutyToDutyByAdmin(duty, subDuty);
-        adminService.addSubDutyToNewExpert(expert, subDuty);
-        adminService.addSubDutyToNewExpert(expert1, subDuty);
+        adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
+
         CustomerOrder customerOrder = createCustomerOrder(2500, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2024, 10, 12), subDuty.getPrice(), duty, subDuty);
         customerOrder.setCustomer(customer);
-        Suggestion suggestion = createSuggestion(duty, subDuty);
-        expert.setSuggestions(Collections.singletonList(suggestion));
-        Suggestion suggestion1 = createSuggestion(duty, subDuty);
-        expert1.setSuggestions(Collections.singletonList(suggestion1));
+
+        // Create suggestions for expert
+        Suggestion suggestion = createSuggestion(3100, LocalDate.of(2024, 10, 9));
+        List<Suggestion> suggestionsListForExpert = new ArrayList<>();
+        suggestionsListForExpert.add(suggestion);
+        suggestion.setOrder(customerOrder);
+        suggestionRepository.save(suggestion);
+
+        // Create suggestions for another expert
+        Suggestion suggestion1 = createSuggestion(3200, LocalDate.of(2024, 10, 9));
+        List<Suggestion> suggestionsListForAnotherExpert = new ArrayList<>();
+        suggestionsListForAnotherExpert.add(suggestion1);
+        suggestion1.setOrder(customerOrder);
+        suggestionRepository.save(suggestion1);
+
+        // Retrieve suggestions
+        List<Suggestion> suggestions = customerOrderService.showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(customer);
+        assertEquals(suggestionsListForExpert.get(0), suggestions.get(0));
+    }
+
+    @Test
+    void showCustomerOrderOfSpecificCustomerBasedOnStarOfExpert() throws IOException {
+        Expert expert = createExpert();
+        expert.setStar(4.2);
+        expertRepository.save(expert);
+
+        Expert anotherExpert = createAnotherExpert();
+        anotherExpert.setStar(4.1);
+        expertRepository.save(anotherExpert);
+
+        Duty duty = createDuty();
+        SubDuty subDuty = createSubDuty(2000);
+        Customer customer = createCustomer();
+        adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
+        adminService.addSubDutyToNewExpert(expert, subDuty);
+        adminService.addSubDutyToNewExpert(anotherExpert, subDuty);
+
+        CustomerOrder customerOrder = createCustomerOrder(2500, LocalDate.now(),
+                Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2024, 10, 12), subDuty.getPrice(), duty, subDuty);
+        customerOrder.setCustomer(customer);
+        customerOrderRepository.save(customerOrder);
+
+        // Create suggestions for expert
+        Suggestion suggestion = createSuggestion(3100, LocalDate.of(2024, 10, 9));
+        List<Suggestion> suggestionsListForExpert = new ArrayList<>();
+        suggestionsListForExpert.add(suggestion);
+        expert.setSuggestions(suggestionsListForExpert);
+        expertRepository.save(expert);
+        suggestion.setOrder(customerOrder);
+        suggestion.setExpert(expert);
+        suggestionRepository.save(suggestion);
+
+        // Create suggestions for another expert
+        Suggestion suggestion1 = createSuggestion(3100, LocalDate.of(2024, 10, 9));
+        List<Suggestion> suggestionsListForAnotherExpert = new ArrayList<>();
+        suggestionsListForAnotherExpert.add(suggestion1);
+        anotherExpert.setSuggestions(suggestionsListForAnotherExpert);
+        expertRepository.save(anotherExpert);
+        suggestion1.setOrder(customerOrder);
+        suggestion1.setExpert(anotherExpert);
+        suggestionRepository.save(suggestion1);
+
+        // Retrieve suggestions
         List<Suggestion> suggestions = customerOrderService.showSuggestionsBasedOnStarOfExpert(customer);
-        assertEquals(suggestion1,suggestions.get(0));
-    }*/
+        assertEquals(suggestionsListForExpert.get(0), suggestions.get(0));
+
+    }
+
 }

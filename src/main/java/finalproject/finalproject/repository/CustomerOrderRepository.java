@@ -34,21 +34,13 @@ public interface CustomerOrderRepository
             "AND (co.status = 'WAITING_FOR_THE_SUGGESTION_OF_EXPERTS' OR co.status = 'WAITING_EXPERT_SELECTION')")
     List<CustomerOrder> showCustomerOrdersToExpertBasedOnCustomerOrderStatus(@Param("expert") Expert expert);
 
-
     @Query("SELECT s FROM Suggestion s " +
             "JOIN FETCH s.order co " +
             "WHERE co.customer = :customer " +
             "ORDER BY s.suggestedPrice ASC")
     List<Suggestion> showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(@Param("customer") Customer customer);
 
-
-
-    @Query("SELECT s FROM Suggestion s " +
-            "JOIN FETCH s.expert e " +
-            "JOIN s.order co " +
-            "WHERE co.customer = :customer " +
-            "ORDER BY e.star DESC")
+    @Query("SELECT s FROM Suggestion s WHERE s.order.customer= :customer ORDER BY s.expert.star DESC ")
     List<Suggestion> showSuggestionsBasedOnStarOfExpert(@Param("customer") Customer customer);
-
 
 }

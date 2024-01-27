@@ -53,9 +53,10 @@ class SuggestionServiceImplTest extends BaseTest {
     void approveSuggestion() {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(3000);
-        Suggestion suggestion = createSuggestion(3100, LocalDate.of(2024, 10, 9),
-                3000, LocalDate.of(2024, 10, 9), duty, subDuty);
-        CustomerOrder order = suggestion.getOrder();
+        Suggestion suggestion = createSuggestion(3100, LocalDate.of(2024, 10, 9)/*,
+                3000, LocalDate.of(2024, 10, 9), duty, subDuty*/);
+        CustomerOrder order = createCustomerOrder(3500, LocalDate.now(), Status.WAITING_EXPERT_SELECTION,
+                LocalDate.of(2024, 10, 9), subDuty.getPrice(), duty, subDuty);
         suggestion.setOrder(order);
         suggestionService.approveSuggestion(suggestion);
         customerOrderRepository.save(order);

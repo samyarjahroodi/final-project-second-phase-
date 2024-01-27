@@ -2,6 +2,7 @@ package finalproject.finalproject.service.impl;
 
 
 import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.utility.Wallet;
 import finalproject.finalproject.repository.CustomerRepository;
@@ -27,17 +28,18 @@ public class CustomerServiceImpl
 
     @Override
     public Customer findByUsernameAndPassword(String username, String password) {
+        //This method is for login for different user types
         return repository.findByUsernameAndPassword(username, password);
     }
 
     @Override
-    public void changeStatusOfCustomerOrder(CustomerOrder customerOrder, Customer customer) {
-        repository.changeStatusOfCustomerOrderToStarted(customerOrder, customer);
+    public void changeStatusOfCustomerOrderToWaitingForTheExpertToComeToYourPlace(CustomerOrder customerOrder) {
+        customerOrder.setStatus(Status.WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE);
     }
 
     @Override
-    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, Customer customer) {
-        repository.changeStatusOfCustomerOrderToFinished(customerOrder, customer);
+    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder) {
+        customerOrder.setStatus(Status.FINISHED);
     }
 
     public void createCustomer(UserDto dto) {
@@ -55,20 +57,14 @@ public class CustomerServiceImpl
     }
 
     public void changePassword(String username, String oldPassword, String newPassword) {
-        for (Customer c : repository.findAll()) {
-            if (username.equals(c.getUsername())) {
-                for (Customer c1 : repository.findAll()) {
-                    if (c1.getPassword().equals(oldPassword)) {
-                        Customer customer = repository.findByUsernameAndPassword(username, oldPassword);
-                        customer.setPassword(newPassword);
-                        repository.save(customer);
-                        return;
-                    } else {
-                        throw new IllegalArgumentException("your password is not strong");
-                    }
-                }
-            }
-        }
-        throw new NullPointerException("null or empty username");
+        Customer customer = repository.findAll().stream()
+                .filter(c -> username.equals(c.getUsername()))
+                .filter(c1 -> c1.getPassword().equals(oldPassword))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+
+        customer.setPassword(newPassword);
+        repository.save(customer);
     }
+
 }

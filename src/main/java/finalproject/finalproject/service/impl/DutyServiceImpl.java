@@ -19,6 +19,6 @@ public class DutyServiceImpl
 
     @Override
     public List<SubDuty> showSubDutiesOfSpecificDuty(Duty duty) {
-        return dutyRepository.showSubDutiesOfSpecificDuty(duty);
+        return duty.getSubDuties();
     }
 }

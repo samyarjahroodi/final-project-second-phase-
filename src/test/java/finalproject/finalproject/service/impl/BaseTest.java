@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Collections;
 
 @DataJpaTest
 @ComponentScan(basePackages = "finalproject.finalproject")
@@ -26,6 +27,9 @@ public class BaseTest {
 
     @Autowired
     protected DutyRepository dutyRepository;
+
+    @Autowired
+    protected DutyServiceImpl dutyService;
 
     @Autowired
     protected ExpertRepository expertRepository;
@@ -89,6 +93,38 @@ public class BaseTest {
                 .build();
     }
 
+    protected Expert createAnotherExpert() throws IOException {
+        String imagePath = "C:\\Users\\Samyar\\Desktop\\images.jpg";
+        byte[] imageData = Files.readAllBytes(Paths.get(imagePath));
+        ExpertDto expertDto = createAnotherExpertDto();
+        Expert expert = Expert.builder()
+                .firstname(expertDto.getFirstname())
+                .lastname(expertDto.getLastname())
+                .email(expertDto.getEmail())
+                .password(expertDto.getPassword())
+                .username(expertDto.getUsername())
+                .image(expertService.setImageForExpert(imagePath))
+                .build();
+        expert.setRegistrationStatus(RegistrationStatus.ACCEPTED);
+        expert.setWhenExpertRegistered(LocalDate.now());
+        expertRepository.save(expert);
+        return expert;
+    }
+
+    protected ExpertDto createAnotherExpertDto() throws IOException {
+        String imagePath = "C:\\Users\\Samyar\\Desktop\\images.jpg";
+        byte[] imageData = Files.readAllBytes(Paths.get(imagePath));
+        return ExpertDto.builder()
+                .firstname("another_employee")
+                .lastname("Another Employ")
+                .email("another_employee@employee.com")
+                .username("another_employee")
+                .password("another_password@domain.com")
+                .profileImage(imageData)
+                .build();
+    }
+
+
     protected SuggestionDto createSuggestionDto(int suggestionPrice, LocalDate whenSuggestionCreated, LocalDate suggestedTimeToStartTheProject, int daysThatTaken) {
         return SuggestionDto.builder()
                 .suggestedPrice(suggestionPrice)
@@ -98,8 +134,8 @@ public class BaseTest {
                 .build();
     }
 
-    protected Suggestion createSuggestion(int suggestionPrice,LocalDate suggestedTimeToStartTheProjectByExpert,int orderPrice,
-                                          LocalDate suggestedTimeToStartTheProjectByCustomer,Duty duty, SubDuty subDuty) {
+    protected Suggestion createSuggestion(int suggestionPrice,LocalDate suggestedTimeToStartTheProjectByExpert/*,int orderPrice,
+                                          LocalDate suggestedTimeToStartTheProjectByCustomer,Duty duty, SubDuty subDuty*/) {
         SuggestionDto dto =
                 createSuggestionDto(suggestionPrice, LocalDate.now(), suggestedTimeToStartTheProjectByExpert,10);
         Suggestion suggestion = Suggestion.builder()
@@ -107,12 +143,14 @@ public class BaseTest {
                 .whenSuggestionCreated(dto.getWhenSuggestionCreated())
                 .suggestedTimeToStartTheProject(dto.getSuggestedTimeToStartTheProject())
                 .daysThatTaken(dto.getDaysThatTaken())
-                .order(createCustomerOrder(orderPrice, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, suggestedTimeToStartTheProjectByCustomer, subDuty.getPrice(), duty, subDuty))
+              /*  .order(dto)*/
                 .build();
         suggestionRepository.save(suggestion);
         return suggestion;
     }
-
+/*
+    createCustomerOrder(orderPrice, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, suggestedTimeToStartTheProjectByCustomer, subDuty.getPrice(), duty, subDuty)
+*/
     protected Customer createCustomer() {
         UserDto dto = UserDto.builder()
                 .firstname("John")
@@ -164,7 +202,7 @@ public class BaseTest {
     }
 
     protected void addSubDutyToDutyByAdmin(Duty duty, SubDuty subDuty, int priceOfTheSubDuty) {
-        adminService.addSubDutyToDutyByAdmin(createDuty(), createSubDuty(priceOfTheSubDuty));
+        adminService.addSubDutyToDutyByAdmin(createDuty(), Collections.singletonList(createSubDuty(priceOfTheSubDuty)));
     }
 
 

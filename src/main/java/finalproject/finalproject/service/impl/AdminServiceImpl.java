@@ -26,9 +26,8 @@ import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_
 
 
 @AllArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
-
 public class AdminServiceImpl
         implements AdminService {
     private final DutyRepository dutyRepository;
@@ -115,8 +114,8 @@ public class AdminServiceImpl
         expertRepository.save(expert);
     }
 
-    public void addSubDutyToDutyByAdmin(Duty duty, SubDuty subDuty) {
-        duty.setSubDuties(Collections.singletonList(subDuty));
+    public void addSubDutyToDutyByAdmin(Duty duty, List<SubDuty> subDuties) {
+        duty.setSubDuties(subDuties);
     }
 
     public void deleteSubDutyFromTheExistDuty(SubDuty subDuty) {
@@ -133,10 +132,16 @@ public class AdminServiceImpl
 
 
     public void addSubDutyToNewExpert(Expert expert, SubDuty subDuty) {
-        List<Expert> experts = new ArrayList<>();
-        experts.add(expert);
-        changeTheStatusOfExpert(expert);
-        subDuty.setExperts(experts);
+        if (subDuty.getExperts() == null) {
+            List<Expert> experts = new ArrayList<>();
+            experts.add(expert);
+            subDuty.setExperts(experts);
+            changeTheStatusOfExpert(expert);
+        } else {
+            List<Expert> experts1 = subDuty.getExperts();
+            experts1.add(expert);
+            changeTheStatusOfExpert(expert);
+        }
         subDutyRepository.save(subDuty);
     }
 
