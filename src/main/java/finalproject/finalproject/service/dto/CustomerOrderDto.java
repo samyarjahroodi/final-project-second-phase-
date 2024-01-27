@@ -4,6 +4,7 @@ import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.Status;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -11,12 +12,12 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class CustomerOrderDto {
 
     private String description;
 
-    private int price;
+    private double price;
 
     private LocalDate timeOfOrder;
 
@@ -24,7 +25,7 @@ public class CustomerOrderDto {
 
     private Status status;
 
-    private LocalDate starOfTheProject;
+    private LocalDate suggestedTimeToStartTheProjectByCustomer;
 
     private Duty duty;
 

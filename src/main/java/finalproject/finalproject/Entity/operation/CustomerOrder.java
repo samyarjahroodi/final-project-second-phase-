@@ -6,11 +6,12 @@ import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Customer;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -20,7 +21,7 @@ import java.util.List;
 public class CustomerOrder extends BaseEntity<Integer> {
     private String description;
 
-    private int price;
+    private double price;
 
     //time of order!!!
     @Column(name = "time_of_order")
@@ -32,7 +33,7 @@ public class CustomerOrder extends BaseEntity<Integer> {
     private Status status;
 
     @Column(name = "start_of_the_project")
-    private LocalDate starOfTheProject;
+    private LocalDate suggestedTimeToStartTheProjectByCustomer;
 
     @ManyToOne
     private Duty duty;

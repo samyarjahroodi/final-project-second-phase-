@@ -6,17 +6,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@ToString
 public class Expert extends Person {
     @Column(name = "registration_status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -28,7 +30,7 @@ public class Expert extends Person {
 
     //image of the expert!!
     @Lob
-    @Column(name = "image_of_expert", nullable = false)
+    @Column(name = "image_of_expert", nullable = false, columnDefinition = "BLOB")
     private byte[] image;
 
     @Max(5)

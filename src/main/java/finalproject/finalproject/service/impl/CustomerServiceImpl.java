@@ -1,6 +1,7 @@
 package finalproject.finalproject.service.impl;
 
 
+import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.utility.Wallet;
 import finalproject.finalproject.repository.CustomerRepository;
@@ -27,6 +28,16 @@ public class CustomerServiceImpl
     @Override
     public Customer findByUsernameAndPassword(String username, String password) {
         return repository.findByUsernameAndPassword(username, password);
+    }
+
+    @Override
+    public void changeStatusOfCustomerOrder(CustomerOrder customerOrder, Customer customer) {
+        repository.changeStatusOfCustomerOrderToStarted(customerOrder, customer);
+    }
+
+    @Override
+    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, Customer customer) {
+        repository.changeStatusOfCustomerOrderToFinished(customerOrder, customer);
     }
 
     public void createCustomer(UserDto dto) {

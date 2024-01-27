@@ -5,10 +5,11 @@ import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Expert;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -16,15 +17,17 @@ import java.util.List;
 @Entity
 //@ToString
 public class SubDuty extends BaseEntity<Integer> {
-
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private double price;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn(/*nullable = false*/)
     private Duty duty;
 
 

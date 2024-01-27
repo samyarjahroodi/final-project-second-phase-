@@ -7,7 +7,17 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExpertDto extends UserDto {
+public class ExpertDto {
+
+    private String firstname;
+
+    private String lastname;
+
+    private String email;
+
+    private String username;
+
+    private String password;
 
     byte[] profileImage;
 

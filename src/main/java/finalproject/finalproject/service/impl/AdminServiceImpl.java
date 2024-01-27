@@ -10,6 +10,7 @@ import finalproject.finalproject.repository.ExpertRepository;
 import finalproject.finalproject.repository.SubDutyRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.AdminService;
+import finalproject.finalproject.service.SubDutyService;
 import finalproject.finalproject.service.dto.DutyDto;
 import finalproject.finalproject.service.dto.ExpertDto;
 import finalproject.finalproject.service.dto.SubDutyDto;
@@ -17,22 +18,25 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
 import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_CONFIRMATION;
 
 
-@Service
 @AllArgsConstructor
-@Transactional
-@SuppressWarnings("unused")
+@Transactional(readOnly = true)
+@Service
+
 public class AdminServiceImpl
         implements AdminService {
     private final DutyRepository dutyRepository;
     private final SubDutyRepository subDutyRepository;
     private final ExpertRepository expertRepository;
     private final WalletRepository walletRepository;
+    private final ExpertServiceImpl expertService;
+    private final SubDutyService subDutyService;
 
 
     public void createDuty(DutyDto dto) {
@@ -62,7 +66,7 @@ public class AdminServiceImpl
             }
             subDutyRepository.save(subDuty);
         } else {
-            throw new IllegalArgumentException("duty not found");
+            throw new NullPointerException("duty not found");
         }
     }
 
@@ -86,15 +90,12 @@ public class AdminServiceImpl
             existingSubDuty.setName(dto.getName());
             existingSubDuty.setDescription(dto.getDescription());
             existingSubDuty.setPrice(dto.getPrice());
-            existingSubDuty.setDuty(dto.getDuty());
-            existingSubDuty.setExperts(dto.getExperts());
-
             subDutyRepository.save(existingSubDuty);
         }
     }
 
 
-    public void createExpert(ExpertDto dto) {
+    public void createExpert(ExpertDto dto) throws IOException {
         Wallet wallet = Wallet.builder()
                 .creditOfWallet(0)
                 .build();
@@ -110,17 +111,20 @@ public class AdminServiceImpl
         expert.setRegistrationStatus(AWAITING_CONFIRMATION);
         expert.setStar(expertRepository.averageStarOfExpert(expert));
         expert.setWhenExpertRegistered(LocalDate.now());
-        expert.setImage(dto.getProfileImage());
+        expert.setImage(expertService.setImageForExpert("C:\\Users\\Samyar\\Desktop\\images.jpg"));
         expertRepository.save(expert);
     }
 
-
-    public void deleteSubDutyFromTheExistDuty(SubDuty subDuty) {
-        subDutyRepository.delete(subDuty);
+    public void addSubDutyToDutyByAdmin(Duty duty, SubDuty subDuty) {
+        duty.setSubDuties(Collections.singletonList(subDuty));
     }
 
-    public void deleteExpertFromSubDuty(Expert expert) {
-        expertRepository.deleteAllOfSubDutiesOFThatSpecificExpert(expert);
+    public void deleteSubDutyFromTheExistDuty(SubDuty subDuty) {
+        subDutyService.deleteSubDutyFromTheExistDuty(subDuty);
+    }
+
+    public void deleteSubDutyOFTheSpecificExpert(Expert expert, SubDuty subDuty) {
+        expertService.deleteSubDutyOFTheSpecificExpert(expert, subDuty);
     }
 
     public void deleteExpert(Expert expert) {
@@ -129,14 +133,14 @@ public class AdminServiceImpl
 
 
     public void addSubDutyToNewExpert(Expert expert, SubDuty subDuty) {
+        List<Expert> experts = new ArrayList<>();
+        experts.add(expert);
         changeTheStatusOfExpert(expert);
-        subDuty.setExperts(Collections.singletonList(expert));
+        subDuty.setExperts(experts);
         subDutyRepository.save(subDuty);
     }
 
     private void changeTheStatusOfExpert(Expert expert) {
         expertRepository.updateRegistrationStatusForSpecificExpert(RegistrationStatus.ACCEPTED, expert);
     }
-
-
 }

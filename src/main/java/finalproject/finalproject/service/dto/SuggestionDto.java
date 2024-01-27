@@ -23,7 +23,7 @@ public class SuggestionDto {
 
     /*private CustomerOrder order;*/
 
-    private Boolean isApproved;
+   /* private Boolean isApproved;*/
 
    /* private Expert expert;*/
 

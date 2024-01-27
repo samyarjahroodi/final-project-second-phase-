@@ -19,8 +19,8 @@ public class SubDutyDto {
 
     private Integer price;
 
-    private Duty duty;
+   /* private Duty duty;
 
-    private List<Expert> experts;
+    private List<Expert> experts;*/
 
 }

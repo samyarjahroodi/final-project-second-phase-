@@ -8,6 +8,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 
 @AllArgsConstructor
@@ -15,7 +16,7 @@ import lombok.*;
 @Getter
 @Setter
 @MappedSuperclass
-@Builder
+@SuperBuilder
 @SuppressWarnings("unused")
 public class Person extends BaseEntity<Integer> {
     @Column(nullable = false)
