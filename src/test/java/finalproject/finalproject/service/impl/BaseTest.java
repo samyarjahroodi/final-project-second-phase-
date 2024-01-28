@@ -50,6 +50,9 @@ public class BaseTest {
     protected SubDutyRepository subDutyRepository;
 
     @Autowired
+    protected SubDutyServiceImpl subDutyService;
+
+    @Autowired
     protected AdminServiceImpl adminService;
 
     @Autowired
