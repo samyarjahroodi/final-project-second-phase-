@@ -20,8 +20,16 @@ class CustomerServiceImplTest extends BaseTest {
     @Test
     void findByUsernameAndPassword() {
         Customer customer = createCustomer();
-        Customer foundedCustomerByUsernameAndPassword = customerService.findByUsernameAndPassword(customer.getUsername(),customer.getPassword());
-        Assertions.assertEquals(customer,foundedCustomerByUsernameAndPassword);
+        Customer foundedCustomerByUsernameAndPassword = customerService.findByUsernameAndPassword(customer.getUsername(), customer.getPassword());
+        Assertions.assertEquals(customer, foundedCustomerByUsernameAndPassword);
+    }
+
+    @Test
+    void findByUsernameAndPasswordWhenUsernameOrPasswordIsNull() {
+        Customer customer = createCustomer();
+        IllegalArgumentException illegalArgumentException =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.findByUsernameAndPassword(null, customer.getPassword()));
+        Assertions.assertEquals("username or password cannot be null", illegalArgumentException.getMessage());
     }
 
     @Test
@@ -35,6 +43,13 @@ class CustomerServiceImplTest extends BaseTest {
     }
 
     @Test
+    void changeStatusOfCustomerOrderToWaitingForTheExpertToComeToYourPlaceWhenCustomerIsNull() {
+        IllegalArgumentException illegalArgumentException =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusOfCustomerOrderToWaitingForTheExpertToComeToYourPlace(null));
+        Assertions.assertEquals("customerOrder cannot be null", illegalArgumentException.getMessage());
+    }
+
+    @Test
     void changeStatusOfCustomerOrderToFinished() {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(1500);
@@ -45,15 +60,39 @@ class CustomerServiceImplTest extends BaseTest {
     }
 
     @Test
+    void changeStatusOfCustomerOrderToFinishedWhenCustomerIsNull() {
+        IllegalArgumentException illegalArgumentException =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusOfCustomerOrderToFinished(null));
+        Assertions.assertEquals("customerOrder cannot be null", illegalArgumentException.getMessage());
+    }
+
+
+    @Test
     void createCustomerForTest() {
-        Customer customer = createCustomer();
+        customerService.createCustomer(createUserDto());
         Assertions.assertEquals(1, customerRepository.findAll().size());
+    }
+
+    @Test
+    void createCustomerForTestWhenDtoIsNull() {
+        IllegalArgumentException illegalArgumentException =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.createCustomer(null));
+        Assertions.assertEquals("dto cannot be null", illegalArgumentException.getMessage());
     }
 
     @Test
     void changePassword() {
         Customer customer = createCustomer();
-        customerService.changePassword(customer.getUsername(),customer.getPassword(),"my_password@domain");
-        Assertions.assertEquals("my_password@domain",customer.getPassword());
+        customerService.changePassword(customer.getUsername(), customer.getPassword(), "my_password@domain");
+        Assertions.assertEquals("my_password@domain", customer.getPassword());
     }
+
+    @Test
+    void changePasswordWhenUsernameOrOldPasswordOrNewPasswordIsNull() {
+        Customer customer = createCustomer();
+        IllegalArgumentException illegalArgumentException =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changePassword(null,customer.getPassword(),null));
+        Assertions.assertEquals("username , old password , new password cannot be null", illegalArgumentException.getMessage());
+    }
+
 }

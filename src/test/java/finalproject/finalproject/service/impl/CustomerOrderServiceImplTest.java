@@ -37,13 +37,26 @@ class CustomerOrderServiceImplTest extends BaseTest {
     }
 
     @Test
-    void publishOrderWhenTheTimeOfOrderIsBeforeNo() {
+    void publishOrderWhenCustomerIsNull() {
+        Customer customer = createCustomer();
+        Duty duty = createDuty();
+        SubDuty subDuty = createSubDuty(3000);
+        NullPointerException nullPointerException = assertThrows(NullPointerException.class,
+                () -> customerOrderService.publishOrder(customer, null, duty, subDuty));
+        assertEquals("customer , duty , subDuty or dto cannot be null", nullPointerException.getMessage());
+    }
+
+    @Test
+    void publishOrderWhenTheTimeOfOrderIsBeforeNow() {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(3000);
         Customer customer = createCustomer();
-        CustomerOrderDto customerOrderDto = createCustomerOrderDto(4000, LocalDate.now(),
+        CustomerOrderDto customerOrderDto = createCustomerOrderDto(3000, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2022, 10, 12), subDuty.getPrice(), duty, subDuty);
-        assertThrows(IllegalArgumentException.class, () -> customerOrderService.publishOrder(customer, customerOrderDto, duty, subDuty));
+
+        IllegalArgumentException illegalArgumentException
+                = assertThrows(IllegalArgumentException.class, () -> customerOrderService.validateExpectedTime(customerOrderDto));
+        assertEquals("Your expected time to start is before the current time", illegalArgumentException.getMessage());
     }
 
 
@@ -74,6 +87,27 @@ class CustomerOrderServiceImplTest extends BaseTest {
         customerOrderRepository.save(customerOrder);
         List<CustomerOrder> customerOrders = customerOrderService.showCustomerOrdersToExpertBasedOnCustomerOrderStatus(expert);
         assertEquals(1, customerOrders.size());
+    }
+
+    @Test
+    void showCustomerOrdersToExpertBasedOnCustomerOrderStatusWhenExpertIsNull() {
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class
+                , () -> customerOrderService.showCustomerOrdersToExpertBasedOnCustomerOrderStatus(null));
+        assertEquals("Expert cannot be null", illegalArgumentException.getMessage());
+    }
+
+    @Test
+    void showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestionsWhenCustomerIsNull() {
+        IllegalArgumentException illegalArgumentException
+                = assertThrows(IllegalArgumentException.class, () -> customerOrderService.showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(null));
+        assertEquals("Customer cannot be null",illegalArgumentException.getMessage());
+    }
+
+    @Test
+    void showSuggestionsBasedOnStarOfExpertWhenCustomerIsNull() {
+        IllegalArgumentException illegalArgumentException
+                = assertThrows(IllegalArgumentException.class, () -> customerOrderService.showSuggestionsBasedOnStarOfExpert(null));
+        assertEquals("Customer cannot be null",illegalArgumentException.getMessage());
     }
 
     @Test

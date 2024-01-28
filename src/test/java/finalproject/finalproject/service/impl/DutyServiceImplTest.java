@@ -21,5 +21,14 @@ class DutyServiceImplTest extends BaseTest {
         adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         List<SubDuty> subDuties = dutyService.showSubDutiesOfSpecificDuty(duty);
         Assertions.assertEquals(1, subDuties.size());
+        Assertions.assertEquals(subDuty, subDuties.get(0));
     }
+
+    @Test
+    void showSubDutiesOfSpecificDutyWhenDutyIsNull() {
+        IllegalArgumentException illegalArgumentException =
+                Assertions.assertThrows(IllegalArgumentException.class, () -> dutyService.showSubDutiesOfSpecificDuty(null));
+        Assertions.assertEquals("Duty must not be null", illegalArgumentException.getMessage());
+    }
+
 }

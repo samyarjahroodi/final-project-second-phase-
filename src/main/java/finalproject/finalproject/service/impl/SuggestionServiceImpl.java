@@ -5,7 +5,6 @@ import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
-import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.repository.CustomerOrderRepository;
 import finalproject.finalproject.repository.SuggestionRepository;
@@ -35,7 +34,6 @@ public class SuggestionServiceImpl
         }
         if (customerOrder.getStatus().equals(WAITING_FOR_THE_SUGGESTION_OF_EXPERTS)
                 || customerOrder.getStatus().equals(WAITING_EXPERT_SELECTION)) {
-
             Suggestion suggestion = Suggestion.builder()
                     .suggestedPrice(dto.getSuggestedPrice())
                     .whenSuggestionCreated(dto.getWhenSuggestionCreated())
@@ -58,12 +56,6 @@ public class SuggestionServiceImpl
             throw new Exception("Whether the status is WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE,STARTED,FINISHED or BEEN_PAID");
         }
     }
-
-  /*  @Override
-    public void approveSuggestion(Suggestion suggestion, Customer customer) {
-        suggestionRepository.approveSuggestion(suggestion, customer);
-    }*/
-
 
     @Override
     public void approveSuggestion(Suggestion suggestion) {

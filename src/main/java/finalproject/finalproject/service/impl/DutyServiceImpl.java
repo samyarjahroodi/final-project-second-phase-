@@ -19,6 +19,9 @@ public class DutyServiceImpl
 
     @Override
     public List<SubDuty> showSubDutiesOfSpecificDuty(Duty duty) {
+        if (duty == null) {
+            throw new IllegalArgumentException("Duty must not be null");
+        }
         return duty.getSubDuties();
     }
 }

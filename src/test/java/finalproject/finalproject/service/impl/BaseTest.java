@@ -74,7 +74,7 @@ public class BaseTest {
                 .username(expertDto.getUsername())
                 .image(expertService.setImageForExpert(imagePath))
                 .build();
-        expert.setRegistrationStatus(RegistrationStatus.ACCEPTED);
+        expert.setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
         expert.setWhenExpertRegistered(LocalDate.now());
         expertRepository.save(expert);
         return expert;
@@ -89,6 +89,7 @@ public class BaseTest {
                 .email("employee@employee.com")
                 .username("employee")
                 .password("my_password@domain.com")
+                .pathName(imagePath)
                 .profileImage(imageData)
                 .build();
     }
@@ -134,32 +135,33 @@ public class BaseTest {
                 .build();
     }
 
-    protected Suggestion createSuggestion(int suggestionPrice,LocalDate suggestedTimeToStartTheProjectByExpert/*,int orderPrice,
+    protected Suggestion createSuggestion(int suggestionPrice, LocalDate suggestedTimeToStartTheProjectByExpert/*,int orderPrice,
                                           LocalDate suggestedTimeToStartTheProjectByCustomer,Duty duty, SubDuty subDuty*/) {
         SuggestionDto dto =
-                createSuggestionDto(suggestionPrice, LocalDate.now(), suggestedTimeToStartTheProjectByExpert,10);
+                createSuggestionDto(suggestionPrice, LocalDate.now(), suggestedTimeToStartTheProjectByExpert, 10);
         Suggestion suggestion = Suggestion.builder()
                 .suggestedPrice(dto.getSuggestedPrice())
                 .whenSuggestionCreated(dto.getWhenSuggestionCreated())
                 .suggestedTimeToStartTheProject(dto.getSuggestedTimeToStartTheProject())
                 .daysThatTaken(dto.getDaysThatTaken())
-              /*  .order(dto)*/
+                /*  .order(dto)*/
                 .build();
         suggestionRepository.save(suggestion);
         return suggestion;
     }
-/*
-    createCustomerOrder(orderPrice, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, suggestedTimeToStartTheProjectByCustomer, subDuty.getPrice(), duty, subDuty)
-*/
-    protected Customer createCustomer() {
-        UserDto dto = UserDto.builder()
+
+    protected UserDto createUserDto() {
+        return UserDto.builder()
                 .firstname("John")
                 .lastname("Doe")
                 .email("john.doe@example.com")
                 .username("john_doe")
                 .password("my_password@domain.com")
                 .build();
+    }
 
+    protected Customer createCustomer() {
+        UserDto dto = createUserDto();
         Customer customer = Customer.builder()
                 .firstname(dto.getFirstname())
                 .lastname(dto.getLastname())
@@ -205,11 +207,14 @@ public class BaseTest {
         adminService.addSubDutyToDutyByAdmin(createDuty(), Collections.singletonList(createSubDuty(priceOfTheSubDuty)));
     }
 
-
-    protected Duty createDuty() {
-        DutyDto dutyDto = DutyDto.builder()
+    protected DutyDto createDutyDto() {
+        return DutyDto.builder()
                 .name("home maintenance")
                 .build();
+    }
+
+    protected Duty createDuty() {
+        DutyDto dutyDto = createDutyDto();
         Duty duty = Duty.builder()
                 .name(dutyDto.getName())
                 .build();
@@ -217,12 +222,16 @@ public class BaseTest {
         return duty;
     }
 
-    protected SubDuty createSubDuty(int price) {
-        SubDutyDto subDutyDto = SubDutyDto.builder()
+    protected SubDutyDto createSubDutyDto(int price) {
+        return SubDutyDto.builder()
                 .name("painting walls")
                 .description("with white color")
                 .price(price)
                 .build();
+    }
+
+    protected SubDuty createSubDuty(int price) {
+        SubDutyDto subDutyDto = createSubDutyDto(price);
         SubDuty subDuty = SubDuty.builder()
                 .name(subDutyDto.getName())
                 .description(subDutyDto.getDescription())
