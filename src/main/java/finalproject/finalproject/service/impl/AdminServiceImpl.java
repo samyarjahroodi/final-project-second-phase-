@@ -39,14 +39,13 @@ public class AdminServiceImpl
 
 
     public void createDuty(DutyDto dto) {
+        String dtoName = dto.getName();
+        if (dutyRepository.findAll().stream().anyMatch(d -> d.getName().equals(dtoName))) {
+            throw new IllegalArgumentException("You already have this duty");
+        }
         Duty duty = Duty.builder()
                 .name(dto.getName())
                 .build();
-        for (Duty d : dutyRepository.findAll()) {
-            if (d.getName().equals(duty.getName())) {
-                throw new IllegalArgumentException("you already have this duty");
-            }
-        }
         dutyRepository.save(duty);
     }
 
@@ -59,9 +58,8 @@ public class AdminServiceImpl
                     .duty(duty)
                     .price(dto.getPrice())
                     .build();
-            for (SubDuty s : subDutyRepository.findAll()) {
-                if (s.getName().equals(subDuty.getName()))
-                    throw new IllegalArgumentException("you already have this sub duty");
+            if (subDutyRepository.findAll().stream().anyMatch(s -> s.getName().equals(subDuty.getName()))) {
+                throw new IllegalArgumentException("you already have this sub duty");
             }
             subDutyRepository.save(subDuty);
         } else {
@@ -90,6 +88,8 @@ public class AdminServiceImpl
             existingSubDuty.setDescription(dto.getDescription());
             existingSubDuty.setPrice(dto.getPrice());
             subDutyRepository.save(existingSubDuty);
+        } else {
+            throw new NoSuchElementException("Sub duty not found");
         }
     }
 
@@ -119,7 +119,7 @@ public class AdminServiceImpl
     }
 
     public void deleteSubDutyFromTheExistDuty(SubDuty subDuty) {
-        subDutyService.deleteSubDutyFromTheExistDuty(subDuty);
+        subDutyRepository.deleteSubDutyFromTheExistDuty(subDuty);
     }
 
     public void deleteSubDutyOFTheSpecificExpert(Expert expert, SubDuty subDuty) {
