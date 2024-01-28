@@ -100,14 +100,14 @@ class CustomerOrderServiceImplTest extends BaseTest {
     void showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestionsWhenCustomerIsNull() {
         IllegalArgumentException illegalArgumentException
                 = assertThrows(IllegalArgumentException.class, () -> customerOrderService.showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(null));
-        assertEquals("Customer cannot be null",illegalArgumentException.getMessage());
+        assertEquals("Customer cannot be null", illegalArgumentException.getMessage());
     }
 
     @Test
     void showSuggestionsBasedOnStarOfExpertWhenCustomerIsNull() {
         IllegalArgumentException illegalArgumentException
                 = assertThrows(IllegalArgumentException.class, () -> customerOrderService.showSuggestionsBasedOnStarOfExpert(null));
-        assertEquals("Customer cannot be null",illegalArgumentException.getMessage());
+        assertEquals("Customer cannot be null", illegalArgumentException.getMessage());
     }
 
     @Test
@@ -188,5 +188,6 @@ class CustomerOrderServiceImplTest extends BaseTest {
         assertEquals(suggestionsListForExpert.get(0), suggestions.get(0));
 
     }
+
 
 }

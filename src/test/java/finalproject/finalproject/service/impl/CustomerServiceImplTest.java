@@ -4,13 +4,22 @@ import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
+import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
+import finalproject.finalproject.Entity.user.Expert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @DataJpaTest
@@ -95,4 +104,47 @@ class CustomerServiceImplTest extends BaseTest {
         Assertions.assertEquals("username , old password , new password cannot be null", illegalArgumentException.getMessage());
     }
 
+    @Test
+    public void changeStatusToStarted() throws IOException {
+        Expert expert = createExpert();
+        Duty duty = createDuty();
+        SubDuty subDuty = createSubDuty(2000);
+        Customer customer = createCustomer();
+        adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
+        adminService.addSubDutyToNewExpert(expert, subDuty);
+        CustomerOrder customerOrder = createCustomerOrder(2500, LocalDate.now(),
+                Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2024, 10, 12), subDuty.getPrice(), duty, subDuty);
+        customerOrder.setCustomer(customer);
+        customerOrderRepository.save(customerOrder);
+        Suggestion suggestion = createSuggestion(3100, LocalDate.of(2024, 10, 9));
+        List<Suggestion> suggestionsListForExpert = new ArrayList<>();
+        suggestionsListForExpert.add(suggestion);
+        expert.setSuggestions(suggestionsListForExpert);
+        expertRepository.save(expert);
+        suggestion.setOrder(customerOrder);
+        suggestion.setExpert(expert);
+        suggestionRepository.save(suggestion);
+
+        // Valid scenario
+        LocalDate timeToStartTheProject = LocalDate.of(2024, 10, 10);
+        customerOrder.setStatus(Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS);
+        suggestion.setWhenSuggestionCreated(LocalDate.of(2024, 10, 8));
+        customerService.changeStatusToStarted(customerOrder, suggestion, timeToStartTheProject);
+        assertEquals(Status.STARTED, customerOrder.getStatus(), "Status should be STARTED");
+
+        // When suggestion created time is after timeToStartTheProject
+        LocalDate invalidTimeToStartTheProject = LocalDate.of(2024, 10, 7);
+        customerOrder.setStatus(Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS);
+        suggestion.setWhenSuggestionCreated(LocalDate.of(2024, 10, 8));
+        assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusToStarted(customerOrder, suggestion, invalidTimeToStartTheProject),
+                "Should throw IllegalArgumentException for invalid timeToStartTheProject");
+
+        // Null parameters
+        assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusToStarted(null, suggestion, timeToStartTheProject),
+                "customerOrder,suggestion,time to start the project cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusToStarted(customerOrder, null, timeToStartTheProject),
+                "customerOrder,suggestion,time to start the project cannot be null");
+        assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusToStarted(customerOrder, suggestion, null),
+                "customerOrder,suggestion,time to start the project cannot be null");
+    }
 }

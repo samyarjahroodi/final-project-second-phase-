@@ -3,6 +3,7 @@ package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
+import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.utility.Wallet;
 import finalproject.finalproject.repository.CustomerRepository;
@@ -11,6 +12,8 @@ import finalproject.finalproject.service.CustomerService;
 import finalproject.finalproject.service.dto.UserDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 
 @Service
@@ -42,6 +45,16 @@ public class CustomerServiceImpl
             throw new IllegalArgumentException("customerOrder cannot be null");
         }
         customerOrder.setStatus(Status.WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE);
+    }
+
+    public void changeStatusToStarted(CustomerOrder customerOrder, Suggestion suggestion, LocalDate timeToStartTheProject) {
+        if (customerOrder == null || suggestion == null || timeToStartTheProject == null) {
+            throw new IllegalArgumentException("customerOrder,suggestion,time to start the project cannot be null");
+        }
+        if (suggestion.getWhenSuggestionCreated().isAfter(timeToStartTheProject)) {
+            throw new IllegalArgumentException("your time should be after created time for suggestion");
+        }
+        customerOrder.setStatus(Status.STARTED);
     }
 
     @Override
