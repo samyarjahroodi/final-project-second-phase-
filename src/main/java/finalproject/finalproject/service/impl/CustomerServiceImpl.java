@@ -10,15 +10,10 @@ import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -70,7 +65,7 @@ public class CustomerServiceImpl
         customerOrder.setStatus(Status.FINISHED);
     }
 
-    public void createCustomer(UserDtoRequest dto) {
+    public Customer createCustomer(UserDtoRequest dto) {
         if (dto == null) {
             throw new IllegalArgumentException("dto cannot be null");
         }
@@ -83,12 +78,12 @@ public class CustomerServiceImpl
                 .wallet(walletRepository.save(Wallet.builder().creditOfWallet(0).build()))
                 .build();
 
-        repository.save(customer);
+        return repository.save(customer);
     }
 
 
-    public void changePassword(String username, String oldPassword, String newPassword) {
-        if (username == null || oldPassword == null || newPassword == null) {
+    public String changePassword(String username, String oldPassword, String password) {
+        if (username == null || oldPassword == null || password == null) {
             throw new IllegalArgumentException("username , old password , new password cannot be null");
         }
         Customer customer = repository.findAll().stream()
@@ -97,7 +92,8 @@ public class CustomerServiceImpl
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
 
-        customer.setPassword(newPassword);
+        customer.setPassword(password);
         repository.save(customer);
+        return password;
     }
 }

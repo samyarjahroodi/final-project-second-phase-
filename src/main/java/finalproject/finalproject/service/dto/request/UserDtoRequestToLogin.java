@@ -2,13 +2,14 @@ package finalproject.finalproject.service.dto.request;
 
 import lombok.*;
 
-@Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+public class UserDtoRequestToLogin {
 
-public class DutyDtoRequest {
-    private String name;
+    private String username;
 
+    private String password;
 }

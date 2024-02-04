@@ -1,5 +1,6 @@
 package finalproject.finalproject.Entity.operation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
@@ -36,16 +37,19 @@ public class CustomerOrder extends BaseEntity<Integer> {
     private LocalDate suggestedTimeToStartTheProjectByCustomer;
 
     @ManyToOne
+    @JsonIgnore
     private Duty duty;
 
     @ManyToOne
+    @JsonIgnore
     private SubDuty subDuty;
 
     @ManyToOne
+    @JsonIgnore
     private Customer customer;
 
     @OneToMany(mappedBy = "order")
+    @JsonIgnore
     private List<Suggestion> suggestions;
-
 
 }

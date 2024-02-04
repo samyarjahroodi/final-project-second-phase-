@@ -35,11 +35,11 @@ public class CustomerOrderServiceImpl
                 .address(dto.getAddress())
                 .duty(duty)
                 .subDuty(subDuty)
-                .price(dto.getPrice())
-                .timeOfOrder(dto.getTimeOfOrder())
                 .suggestedTimeToStartTheProjectByCustomer(dto.getSuggestedTimeToStartTheProjectByCustomer())
                 .status(Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS)
                 .customer(customer)
+                .price(dto.getPrice())
+                .timeOfOrder(dto.getTimeOfOrder())
                 .build();
 
         return customerOrderRepository.save(customerOrder);
