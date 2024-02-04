@@ -7,14 +7,13 @@ import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Expert;
 
-import finalproject.finalproject.service.dto.*;
+import finalproject.finalproject.service.dto.request.SuggestionDtoRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collections;
 
@@ -44,7 +43,7 @@ class SuggestionServiceImplTest extends BaseTest {
         adminService.addSubDutyToNewExpert(expert, subDuty);
         addSubDutyToDutyByAdmin(duty, subDuty, 1000);
         CustomerOrder customerOrder = createCustomerOrder(1900, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
-        SuggestionDto suggestionDto =
+        SuggestionDtoRequest suggestionDto =
                 createSuggestionDto(1500, LocalDate.now(), LocalDate.of(2024, 10, 10), 10);
         suggestionService.createSuggestionForExpert(expert, suggestionDto, customerOrder);
         assertEquals(1, suggestionRepository.findAll().size());
@@ -74,7 +73,7 @@ class SuggestionServiceImplTest extends BaseTest {
         adminService.addSubDutyToNewExpert(expert, subDuty);
         adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         CustomerOrder customerOrder = createCustomerOrder(1900, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
-        SuggestionDto suggestionDto =
+        SuggestionDtoRequest suggestionDto =
                 createSuggestionDto(900, LocalDate.now(), LocalDate.of(2024, 10, 10), 10);
         Exception exception
                 = assertThrows(Exception.class, () -> suggestionService.createSuggestionForExpert(expert, suggestionDto, customerOrder));
@@ -89,7 +88,7 @@ class SuggestionServiceImplTest extends BaseTest {
         adminService.addSubDutyToNewExpert(expert, subDuty);
         adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         CustomerOrder customerOrder = createCustomerOrder(1900, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
-        SuggestionDto suggestionDto =
+        SuggestionDtoRequest suggestionDto =
                 createSuggestionDto(9000, LocalDate.now(), LocalDate.of(2022, 10, 10), 10);
         Exception exception
                 = assertThrows(Exception.class, () -> suggestionService.createSuggestionForExpert(expert, suggestionDto, customerOrder));
@@ -105,7 +104,7 @@ class SuggestionServiceImplTest extends BaseTest {
         adminService.addSubDutyToNewExpert(expert, subDuty);
         adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         CustomerOrder customerOrder = createCustomerOrder(1900, LocalDate.now(), Status.WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
-        SuggestionDto suggestionDto =
+        SuggestionDtoRequest suggestionDto =
                 createSuggestionDto(9000, LocalDate.now(), LocalDate.of(2022, 10, 10), 10);
         Exception exception
                 = assertThrows(Exception.class, () -> suggestionService.createSuggestionForExpert(expert, suggestionDto, customerOrder));
@@ -119,7 +118,7 @@ class SuggestionServiceImplTest extends BaseTest {
         Expert expert = createExpert();
         adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
         CustomerOrder customerOrder = createCustomerOrder(1900, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
-        SuggestionDto suggestionDto =
+        SuggestionDtoRequest suggestionDto =
                 createSuggestionDto(9000, LocalDate.now(), LocalDate.of(2022, 10, 10), 10);
         Exception exception
                 = assertThrows(Exception.class, () -> suggestionService.createSuggestionForExpert(expert, suggestionDto, customerOrder));

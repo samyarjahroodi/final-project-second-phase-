@@ -9,11 +9,16 @@ import finalproject.finalproject.Entity.utility.Wallet;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
-import finalproject.finalproject.service.dto.UserDto;
+import finalproject.finalproject.service.dto.request.UserDtoRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -65,7 +70,7 @@ public class CustomerServiceImpl
         customerOrder.setStatus(Status.FINISHED);
     }
 
-    public void createCustomer(UserDto dto) {
+    public void createCustomer(UserDtoRequest dto) {
         if (dto == null) {
             throw new IllegalArgumentException("dto cannot be null");
         }
@@ -95,5 +100,4 @@ public class CustomerServiceImpl
         customer.setPassword(newPassword);
         repository.save(customer);
     }
-
 }

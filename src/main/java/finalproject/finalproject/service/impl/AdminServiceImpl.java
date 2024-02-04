@@ -2,19 +2,20 @@ package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.user.Admin;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.utility.Wallet;
-import finalproject.finalproject.repository.DutyRepository;
-import finalproject.finalproject.repository.ExpertRepository;
-import finalproject.finalproject.repository.SubDutyRepository;
-import finalproject.finalproject.repository.WalletRepository;
+import finalproject.finalproject.repository.*;
 import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
-import finalproject.finalproject.service.dto.DutyDto;
-import finalproject.finalproject.service.dto.ExpertDto;
-import finalproject.finalproject.service.dto.SubDutyDto;
+import finalproject.finalproject.service.dto.request.DutyDtoRequest;
+import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
+import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +36,11 @@ public class AdminServiceImpl
     private final ExpertRepository expertRepository;
     private final WalletRepository walletRepository;
     private final ExpertServiceImpl expertService;
+    private final AdminRepository adminRepository;
     private final SubDutyService subDutyService;
 
 
-    public Duty createDuty(DutyDto dto) {
+    public Duty createDuty(DutyDtoRequest dto) {
         if (dto == null) {
             throw new NullPointerException("dto cannot be null");
         }
@@ -52,9 +54,9 @@ public class AdminServiceImpl
         return dutyRepository.save(duty);
     }
 
-    public SubDuty createSubDuty(SubDutyDto dto, Duty duty) {
-        if (dto == null || duty == null) {
-            throw new NullPointerException("dto and duty cannot be null");
+    public SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty) {
+        if (dto == null ) {
+            throw new NullPointerException("dto cannot be null");
         }
         Optional<Duty> dutyById = dutyRepository.findById(duty.getId());
         if (dutyById.isPresent()) {
@@ -85,7 +87,7 @@ public class AdminServiceImpl
         return subDutyRepository.findAll();
     }
 
-    public void updateDetailsForSubDuty(SubDutyDto dto, SubDuty subDuty) {
+    public void updateDetailsForSubDuty(SubDutyDtoRequest dto, SubDuty subDuty) {
         if (subDuty == null || dto == null) {
             throw new NoSuchElementException("Sub duty or dto not found");
         }
@@ -101,7 +103,7 @@ public class AdminServiceImpl
     }
 
 
-    public void createExpert(ExpertDto dto) throws IOException {
+    public void createExpert(ExpertDtoRequest dto) throws IOException {
         if (dto == null) {
             throw new IllegalArgumentException("dto cannot be null");
         }

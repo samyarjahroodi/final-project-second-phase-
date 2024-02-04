@@ -30,7 +30,7 @@ public class Person extends BaseEntity<Integer> {
     private String email;
 
     @Column(nullable = false)
-    @Pattern(regexp = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
+    @Pattern(regexp = "(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")
     private String password;
 
     @Column(nullable = false, unique = true)

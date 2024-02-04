@@ -1,14 +1,13 @@
-package finalproject.finalproject.service.dto;
+package finalproject.finalproject.service.dto.request;
 
 import lombok.*;
-
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class ExpertDtoRequest {
 
     private String firstname;
 
@@ -19,5 +18,7 @@ public class UserDto {
     private String username;
 
     private String password;
+
+    private String pathName;
 
 }

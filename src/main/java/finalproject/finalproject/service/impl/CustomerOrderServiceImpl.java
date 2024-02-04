@@ -10,7 +10,7 @@ import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.repository.CustomerOrderRepository;
 import finalproject.finalproject.service.CustomerOrderService;
-import finalproject.finalproject.service.dto.CustomerOrderDto;
+import finalproject.finalproject.service.dto.request.CustomerOrderDtoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class CustomerOrderServiceImpl
         implements CustomerOrderService {
     private final CustomerOrderRepository customerOrderRepository;
 
-    public CustomerOrder publishOrder(Customer customer, CustomerOrderDto dto, Duty duty, SubDuty subDuty) {
+    public CustomerOrder publishOrder(Customer customer, CustomerOrderDtoRequest dto, Duty duty, SubDuty subDuty) {
         if (customer == null || duty == null || subDuty == null || dto == null) {
             throw new NullPointerException("customer , duty , subDuty or dto cannot be null");
         }
@@ -45,13 +45,13 @@ public class CustomerOrderServiceImpl
         return customerOrderRepository.save(customerOrder);
     }
 
-    public void validatePrice(SubDuty subDuty, CustomerOrderDto dto) {
+    public void validatePrice(SubDuty subDuty, CustomerOrderDtoRequest dto) {
         if (subDuty.getPrice() > dto.getPrice()) {
             throw new IllegalArgumentException("Your price is not enough");
         }
     }
 
-    public void validateExpectedTime(CustomerOrderDto dto) {
+    public void validateExpectedTime(CustomerOrderDtoRequest dto) {
         if (dto.getTimeOfOrder().isAfter(dto.getSuggestedTimeToStartTheProjectByCustomer())) {
             throw new IllegalArgumentException("Your expected time to start is before the current time");
         }

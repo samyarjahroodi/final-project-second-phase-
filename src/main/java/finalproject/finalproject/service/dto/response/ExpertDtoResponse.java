@@ -1,4 +1,4 @@
-package finalproject.finalproject.service.dto;
+package finalproject.finalproject.service.dto.response;
 
 import lombok.*;
 
@@ -7,19 +7,12 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ExpertDto {
+public class ExpertDtoResponse {
 
     private String firstname;
 
     private String lastname;
 
-    private String email;
-
     private String username;
 
-    private String password;
-
-    byte[] profileImage;
-
-    String pathName;
 }

@@ -28,7 +28,7 @@ public class SubDuty extends BaseEntity<Integer> {
     private double price;
 
     @ManyToOne
-    @JoinColumn(/*nullable = false*/)
+    @JoinColumn()
     private Duty duty;
 
 

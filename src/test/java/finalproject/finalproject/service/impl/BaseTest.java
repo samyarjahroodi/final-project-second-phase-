@@ -9,7 +9,7 @@ import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
 import finalproject.finalproject.repository.*;
-import finalproject.finalproject.service.dto.*;
+import finalproject.finalproject.service.dto.request.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -68,7 +68,7 @@ public class BaseTest {
     protected Expert createExpert() throws IOException {
         String imagePath = "C:\\Users\\Samyar\\Desktop\\images.jpg";
         byte[] imageData = Files.readAllBytes(Paths.get(imagePath));
-        ExpertDto expertDto = createExpertDto();
+        ExpertDtoRequest expertDto = createExpertDto();
         Expert expert = Expert.builder()
                 .firstname(expertDto.getFirstname())
                 .lastname(expertDto.getLastname())
@@ -83,24 +83,23 @@ public class BaseTest {
         return expert;
     }
 
-    protected ExpertDto createExpertDto() throws IOException {
+    protected ExpertDtoRequest createExpertDto() throws IOException {
         String imagePath = "C:\\Users\\Samyar\\Desktop\\images.jpg";
         byte[] imageData = Files.readAllBytes(Paths.get(imagePath));
-        return ExpertDto.builder()
+        return ExpertDtoRequest.builder()
                 .firstname("employee")
                 .lastname("Employ")
                 .email("employee@employee.com")
                 .username("employee")
-                .password("my_password@domain.com")
+                .password("Abcd123!")
                 .pathName(imagePath)
-                .profileImage(imageData)
                 .build();
     }
 
     protected Expert createAnotherExpert() throws IOException {
         String imagePath = "C:\\Users\\Samyar\\Desktop\\images.jpg";
         byte[] imageData = Files.readAllBytes(Paths.get(imagePath));
-        ExpertDto expertDto = createAnotherExpertDto();
+        ExpertDtoRequest expertDto = createAnotherExpertDto();
         Expert expert = Expert.builder()
                 .firstname(expertDto.getFirstname())
                 .lastname(expertDto.getLastname())
@@ -115,22 +114,21 @@ public class BaseTest {
         return expert;
     }
 
-    protected ExpertDto createAnotherExpertDto() throws IOException {
+    protected ExpertDtoRequest createAnotherExpertDto() throws IOException {
         String imagePath = "C:\\Users\\Samyar\\Desktop\\images.jpg";
         byte[] imageData = Files.readAllBytes(Paths.get(imagePath));
-        return ExpertDto.builder()
+        return ExpertDtoRequest.builder()
                 .firstname("another_employee")
                 .lastname("Another Employ")
                 .email("another_employee@employee.com")
                 .username("another_employee")
-                .password("another_password@domain.com")
-                .profileImage(imageData)
+                .password("Abcd123!")
                 .build();
     }
 
 
-    protected SuggestionDto createSuggestionDto(int suggestionPrice, LocalDate whenSuggestionCreated, LocalDate suggestedTimeToStartTheProject, int daysThatTaken) {
-        return SuggestionDto.builder()
+    protected SuggestionDtoRequest createSuggestionDto(int suggestionPrice, LocalDate whenSuggestionCreated, LocalDate suggestedTimeToStartTheProject, int daysThatTaken) {
+        return SuggestionDtoRequest.builder()
                 .suggestedPrice(suggestionPrice)
                 .whenSuggestionCreated(whenSuggestionCreated)
                 .suggestedTimeToStartTheProject(suggestedTimeToStartTheProject)
@@ -140,7 +138,7 @@ public class BaseTest {
 
     protected Suggestion createSuggestion(int suggestionPrice, LocalDate suggestedTimeToStartTheProjectByExpert/*,int orderPrice,
                                           LocalDate suggestedTimeToStartTheProjectByCustomer,Duty duty, SubDuty subDuty*/) {
-        SuggestionDto dto =
+        SuggestionDtoRequest dto =
                 createSuggestionDto(suggestionPrice, LocalDate.now(), suggestedTimeToStartTheProjectByExpert, 10);
         Suggestion suggestion = Suggestion.builder()
                 .suggestedPrice(dto.getSuggestedPrice())
@@ -153,8 +151,8 @@ public class BaseTest {
         return suggestion;
     }
 
-    protected UserDto createUserDto() {
-        return UserDto.builder()
+    protected UserDtoRequest createUserDto() {
+        return UserDtoRequest.builder()
                 .firstname("John")
                 .lastname("Doe")
                 .email("john.doe@example.com")
@@ -164,7 +162,7 @@ public class BaseTest {
     }
 
     protected Customer createCustomer() {
-        UserDto dto = createUserDto();
+        UserDtoRequest dto = createUserDto();
         Customer customer = Customer.builder()
                 .firstname(dto.getFirstname())
                 .lastname(dto.getLastname())
@@ -176,9 +174,9 @@ public class BaseTest {
         return customer;
     }
 
-    protected CustomerOrderDto createCustomerOrderDto(double orderPrice, LocalDate timeOfOrder
+    protected CustomerOrderDtoRequest createCustomerOrderDto(double orderPrice, LocalDate timeOfOrder
             , Status status, LocalDate suggestedTimeToStartTheProjectByCustomer, double subDutyPrice, Duty duty, SubDuty subDuty) {
-        CustomerOrderDto customerOrderDto = CustomerOrderDto.builder()
+        CustomerOrderDtoRequest customerOrderDto = CustomerOrderDtoRequest.builder()
                 .description("maintaining walls")
                 .price(orderPrice)
                 .timeOfOrder(timeOfOrder)
@@ -192,7 +190,7 @@ public class BaseTest {
 
     protected CustomerOrder createCustomerOrder(int orderPrice, LocalDate timeOfOrder
             , Status status, LocalDate suggestedTimeToStartTheProjectByCustomer, double subDutyPrice, Duty duty, SubDuty subDuty) {
-        CustomerOrderDto customerOrderDto = createCustomerOrderDto(orderPrice, timeOfOrder, status, suggestedTimeToStartTheProjectByCustomer, subDutyPrice, duty, subDuty);
+        CustomerOrderDtoRequest customerOrderDto = createCustomerOrderDto(orderPrice, timeOfOrder, status, suggestedTimeToStartTheProjectByCustomer, subDutyPrice, duty, subDuty);
         CustomerOrder customerOrder = CustomerOrder.builder()
                 .description(customerOrderDto.getDescription())
                 .price(customerOrderDto.getPrice())
@@ -210,14 +208,14 @@ public class BaseTest {
         adminService.addSubDutyToDutyByAdmin(createDuty(), Collections.singletonList(createSubDuty(priceOfTheSubDuty)));
     }
 
-    protected DutyDto createDutyDto() {
-        return DutyDto.builder()
+    protected DutyDtoRequest createDutyDto() {
+        return DutyDtoRequest.builder()
                 .name("home maintenance")
                 .build();
     }
 
     protected Duty createDuty() {
-        DutyDto dutyDto = createDutyDto();
+        DutyDtoRequest dutyDto = createDutyDto();
         Duty duty = Duty.builder()
                 .name(dutyDto.getName())
                 .build();
@@ -225,8 +223,8 @@ public class BaseTest {
         return duty;
     }
 
-    protected SubDutyDto createSubDutyDto(int price) {
-        return SubDutyDto.builder()
+    protected SubDutyDtoRequest createSubDutyDto(int price) {
+        return SubDutyDtoRequest.builder()
                 .name("painting walls")
                 .description("with white color")
                 .price(price)
@@ -234,7 +232,7 @@ public class BaseTest {
     }
 
     protected SubDuty createSubDuty(int price) {
-        SubDutyDto subDutyDto = createSubDutyDto(price);
+        SubDutyDtoRequest subDutyDto = createSubDutyDto(price);
         SubDuty subDuty = SubDuty.builder()
                 .name(subDutyDto.getName())
                 .description(subDutyDto.getDescription())

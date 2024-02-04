@@ -1,6 +1,7 @@
 package finalproject.finalproject.service;
 
 
+import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Customer;
 import org.springframework.stereotype.Service;

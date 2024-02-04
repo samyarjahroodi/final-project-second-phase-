@@ -4,9 +4,9 @@ import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
-import finalproject.finalproject.service.dto.DutyDto;
-import finalproject.finalproject.service.dto.ExpertDto;
-import finalproject.finalproject.service.dto.SubDutyDto;
+import finalproject.finalproject.service.dto.request.DutyDtoRequest;
+import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
+import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,7 +35,7 @@ class AdminServiceImplTest extends BaseTest {
 
     @Test
     void createDutyForTest() {
-        DutyDto dutyDto = createDutyDto();
+        DutyDtoRequest dutyDto = createDutyDto();
         Duty duty = adminService.createDuty(dutyDto);
         assertEquals("home maintenance", duty.getName());
     }
@@ -59,9 +59,9 @@ class AdminServiceImplTest extends BaseTest {
 
     @Test
     void createSubDutyForTest() {
-        DutyDto dutyDto = createDutyDto();
+        DutyDtoRequest dutyDto = createDutyDto();
         Duty duty = adminService.createDuty(dutyDto);
-        SubDutyDto subDutyDto = createSubDutyDto(3000);
+        SubDutyDtoRequest subDutyDto = createSubDutyDto(3000);
         SubDuty subDuty = adminService.createSubDuty(subDutyDto, duty);
         assertEquals("painting walls", subDuty.getName());
     }
@@ -73,19 +73,10 @@ class AdminServiceImplTest extends BaseTest {
                 NullPointerException.class,
                 () -> adminService.createSubDuty(null, duty)
         );
-        assertEquals("dto and duty cannot be null", exception.getMessage());
+        assertEquals("dto cannot be null", exception.getMessage());
     }
 
-    @Test
-    void testCreateSubDutyWithNullDuty() {
-        SubDutyDto dto = createSubDutyDto(3000);
 
-        NullPointerException exception = assertThrows(
-                NullPointerException.class,
-                () -> adminService.createSubDuty(dto, null)
-        );
-        assertEquals("dto and duty cannot be null", exception.getMessage());
-    }
 
     @Test
     void createDuplicateSubDutyForTest() {
@@ -98,8 +89,8 @@ class AdminServiceImplTest extends BaseTest {
 
     @Test
     void createSubDutyForTestNotFoundDuty() {
-        DutyDto dutyDto = createDutyDto();
-        SubDutyDto subDutyDto = createSubDutyDto(300);
+        DutyDtoRequest dutyDto = createDutyDto();
+        SubDutyDtoRequest subDutyDto = createSubDutyDto(300);
         Duty duty = Duty.builder()
                 .name("ware house color")
                 .build();
@@ -132,7 +123,7 @@ class AdminServiceImplTest extends BaseTest {
     @Test
     void updateDetailsForSubDuty() {
         SubDuty subDuty = createSubDuty(2000);
-        SubDutyDto subDutyDto = createSubDutyDto(4000);
+        SubDutyDtoRequest subDutyDto = createSubDutyDto(4000);
         adminService.updateDetailsForSubDuty(subDutyDto, subDuty);
         assertEquals(4000, subDuty.getPrice());
     }
@@ -147,7 +138,7 @@ class AdminServiceImplTest extends BaseTest {
 
     @Test
     void updateDetailsForSubDutyWithNullSubDuty() {
-        SubDutyDto subDutyDto = createSubDutyDto(3000);
+        SubDutyDtoRequest subDutyDto = createSubDutyDto(3000);
         NoSuchElementException noSuchElementException = assertThrows(NoSuchElementException.class
                 , () -> adminService.updateDetailsForSubDuty(subDutyDto, null));
         assertEquals("Sub duty or dto not found", noSuchElementException.getMessage());
@@ -155,7 +146,7 @@ class AdminServiceImplTest extends BaseTest {
 
     @Test
     void createExpertForTest() throws IOException {
-        ExpertDto expertDto = createExpertDto();
+        ExpertDtoRequest expertDto = createExpertDto();
         adminService.createExpert(expertDto);
         assertEquals(1, expertRepository.findAll().size());
     }

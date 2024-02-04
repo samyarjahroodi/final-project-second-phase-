@@ -19,18 +19,18 @@ import java.util.List;
 @Setter
 @Entity
 @ToString
+@Table(name = "expert")
 public class Expert extends Person {
     @Column(name = "registration_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RegistrationStatus registrationStatus;
+    private RegistrationStatus registrationStatus = RegistrationStatus.AWAITING_CONFIRMATION;
 
     //when expert is registered!!
     @Column(name = "when_expert_registered", nullable = false)
     private LocalDate whenExpertRegistered;
 
     //image of the expert!!
-    @Lob
-    @Column(name = "image_of_expert", nullable = false, columnDefinition = "BLOB")
+    @Column(name = "image_of_expert", nullable = false, columnDefinition = "bytea")
     private byte[] image;
 
     @Max(5)

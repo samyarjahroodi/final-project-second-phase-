@@ -1,7 +1,5 @@
-package finalproject.finalproject.service.dto;
+package finalproject.finalproject.service.dto.response;
 
-import finalproject.finalproject.Entity.operation.CustomerOrder;
-import finalproject.finalproject.Entity.user.Expert;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -11,7 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SuggestionDto {
+public class SuggestionDtoResponse {
 
     private int suggestedPrice;
 

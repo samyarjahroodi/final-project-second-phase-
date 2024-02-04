@@ -1,9 +1,12 @@
-package finalproject.finalproject.service.dto;
+package finalproject.finalproject.service.dto.response;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.Status;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -13,7 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class CustomerOrderDto {
+public class CustomerOrderDtoResponse {
 
     private String description;
 
@@ -26,9 +29,5 @@ public class CustomerOrderDto {
     private Status status;
 
     private LocalDate suggestedTimeToStartTheProjectByCustomer;
-
-    private Duty duty;
-
-    private SubDuty subDuty;
 
 }

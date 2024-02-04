@@ -7,7 +7,7 @@ import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
-import finalproject.finalproject.service.dto.CustomerOrderDto;
+import finalproject.finalproject.service.dto.request.CustomerOrderDtoRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,7 +30,7 @@ class CustomerOrderServiceImplTest extends BaseTest {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(3000);
         Customer customer = createCustomer();
-        CustomerOrderDto customerOrderDto = createCustomerOrderDto(3000, LocalDate.now(),
+        CustomerOrderDtoRequest customerOrderDto = createCustomerOrderDto(3000, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2024, 10, 12), subDuty.getPrice(), duty, subDuty);
         customerOrderService.publishOrder(customer, customerOrderDto, duty, subDuty);
         assertEquals(1, customerOrderRepository.findAll().size());
@@ -51,7 +51,7 @@ class CustomerOrderServiceImplTest extends BaseTest {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(3000);
         Customer customer = createCustomer();
-        CustomerOrderDto customerOrderDto = createCustomerOrderDto(3000, LocalDate.now(),
+        CustomerOrderDtoRequest customerOrderDto = createCustomerOrderDto(3000, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2022, 10, 12), subDuty.getPrice(), duty, subDuty);
 
         IllegalArgumentException illegalArgumentException
@@ -66,7 +66,7 @@ class CustomerOrderServiceImplTest extends BaseTest {
         Duty duty = createDuty();
         SubDuty subDuty = createSubDuty(3000);
         Customer customer = createCustomer();
-        CustomerOrderDto customerOrderDto = createCustomerOrderDto(2500, LocalDate.now(),
+        CustomerOrderDtoRequest customerOrderDto = createCustomerOrderDto(2500, LocalDate.now(),
                 Status.WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, LocalDate.of(2022, 10, 12), subDuty.getPrice(), duty, subDuty);
         assertThrows(IllegalArgumentException.class, () -> customerOrderService.publishOrder(customer, customerOrderDto, duty, subDuty));
     }

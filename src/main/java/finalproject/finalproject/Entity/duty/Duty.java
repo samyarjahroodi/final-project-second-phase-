@@ -1,5 +1,6 @@
 package finalproject.finalproject.Entity.duty;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import jakarta.persistence.Column;
@@ -17,23 +18,16 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@ToString
 public class Duty extends BaseEntity<Integer> {
     @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "duty", fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<SubDuty> subDuties;
 
     @OneToMany(mappedBy = "duty", fetch = FetchType.EAGER)
     private List<CustomerOrder> orders;
 
-    @Override
-    public String toString() {
-        return "Duty{" +
-                "id='" + getId() + '\'' +
-                "name='" + name + '\'' +
-                ", duties=" + subDuties +
-                ", orders=" + orders +
-                '}';
-    }
 }

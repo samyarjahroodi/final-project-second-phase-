@@ -1,17 +1,13 @@
-package finalproject.finalproject.service.dto;
+package finalproject.finalproject.service.dto.request;
 
-import finalproject.finalproject.Entity.duty.Duty;
-import finalproject.finalproject.Entity.user.Expert;
 import lombok.*;
-
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SubDutyDto {
+public class SubDutyDtoRequest {
 
     private String name;
 

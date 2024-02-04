@@ -9,7 +9,7 @@ import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.repository.CustomerOrderRepository;
 import finalproject.finalproject.repository.SuggestionRepository;
 import finalproject.finalproject.service.SuggestionService;
-import finalproject.finalproject.service.dto.SuggestionDto;
+import finalproject.finalproject.service.dto.request.SuggestionDtoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class SuggestionServiceImpl
     private final SuggestionRepository suggestionRepository;
     private final CustomerOrderRepository customerOrderRepository;
 
-    public void createSuggestionForExpert(Expert expert, SuggestionDto dto, CustomerOrder customerOrder) throws Exception {
+    public void createSuggestionForExpert(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) throws Exception {
         List<SubDuty> subDuties = suggestionRepository.giveSubDutiesOfExpert(expert);
         if (!subDuties.contains(customerOrder.getSubDuty())) {
             throw new Exception("you dont have this permission to create a suggestion because you dont have this sub duty");

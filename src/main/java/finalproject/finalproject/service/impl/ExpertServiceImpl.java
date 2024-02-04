@@ -70,6 +70,9 @@ public class ExpertServiceImpl
 
 
     public byte[] setImageForExpert(String pathname) throws IOException {
+        if (pathname == null) {
+            throw new IllegalArgumentException("Pathname cannot be null");
+        }
         if (!pathname.toLowerCase().endsWith(".jpg")) {
             throw new IllegalArgumentException("Only JPG images are allowed");
         }
@@ -79,6 +82,7 @@ public class ExpertServiceImpl
         }
         return imageData;
     }
+
 
 }
 
