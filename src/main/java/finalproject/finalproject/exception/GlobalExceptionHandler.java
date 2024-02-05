@@ -56,5 +56,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> statusException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
-
+    @ExceptionHandler
+    public ResponseEntity<String> notEnoughCreditException(NotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
+    }
 }

@@ -14,7 +14,6 @@ import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +35,7 @@ public class AdminServiceImpl
     private final ExpertServiceImpl expertService;
     private final SubDutyService subDutyService;
 
-
+    @Override
     public Duty createDuty(DutyDtoRequest dto) {
         if (dto == null) {
             throw new NullInputException("dto cannot be null");
@@ -51,6 +50,7 @@ public class AdminServiceImpl
         return dutyService.save(duty);
     }
 
+    @Override
     public SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty) {
         if (dto == null) {
             throw new NullInputException("dto cannot be null");
@@ -72,18 +72,22 @@ public class AdminServiceImpl
         }
     }
 
+    @Override
     public void deleteDuty(Duty duty) {
         dutyService.delete(duty);
     }
 
+    @Override
     public List<Duty> showDuties() {
         return dutyService.findAll();
     }
 
+    @Override
     public List<SubDuty> showSubDuties() {
         return subDutyService.findAll();
     }
 
+    @Override
     public void updateDetailsForSubDuty(SubDutyDtoRequest dto, SubDuty subDuty) {
         if (subDuty == null || dto == null) {
             throw new NotFoundException("Sub duty or dto not found");
@@ -99,7 +103,7 @@ public class AdminServiceImpl
         }
     }
 
-
+    @Override
     public void createExpert(ExpertDtoRequest dto) throws IOException {
         if (dto == null) {
             throw new NullInputException("dto cannot be null");
@@ -124,7 +128,7 @@ public class AdminServiceImpl
         expertService.save(expert);
     }
 
-
+    @Override
     public void addSubDutyToDutyByAdmin(Duty duty, List<SubDuty> subDuties) {
         if (duty == null || subDuties == null || subDuties.isEmpty()) {
             throw new NullInputException("Duty or sub-duties cannot be null or empty");
@@ -132,7 +136,7 @@ public class AdminServiceImpl
         duty.setSubDuties(subDuties);
     }
 
-
+    @Override
     public void deleteSubDutyFromTheExistDuty(SubDuty subDuty) {
         if (subDuty == null) {
             throw new NullInputException("sub duty cannot be null");
@@ -140,6 +144,7 @@ public class AdminServiceImpl
         subDutyService.deleteSubDutyFromTheExistDuty(subDuty);
     }
 
+    @Override
     public void deleteSubDutyOFTheSpecificExpert(Expert expert, SubDuty subDuty) {
         if (subDuty == null || expert == null) {
             throw new NullInputException("Expert or sub duty cannot be null");
@@ -147,6 +152,7 @@ public class AdminServiceImpl
         expertService.deleteSubDutyOFTheSpecificExpert(expert, subDuty);
     }
 
+    @Override
     public void deleteExpert(Expert expert) {
         if (expert == null) {
             throw new NullInputException("Expert cannot be null");
@@ -154,7 +160,7 @@ public class AdminServiceImpl
         expertService.delete(expert);
     }
 
-
+    @Override
     public void addSubDutyToNewExpert(Expert expert, SubDuty subDuty) {
         if (subDuty == null || expert == null) {
             throw new NullInputException("Expert or sub duty cannot be null or empty");
@@ -172,6 +178,7 @@ public class AdminServiceImpl
         subDutyService.save(subDuty);
     }
 
+    @Override
     public void changeTheStatusOfExpert(Expert expert) {
         if (expert == null || expertService.findById(expert.getId()).isEmpty()) {
             throw new NullInputException("Expert object cannot be null");

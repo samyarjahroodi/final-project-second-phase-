@@ -13,6 +13,6 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 public class Wallet extends BaseEntity<Integer> {
-    private int creditOfWallet;
+    private double creditOfWallet;
 
 }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 
 @Service
-public interface CustomerService extends BaseService<Customer,Integer> {
+public interface CustomerService extends BaseService<Customer, Integer> {
 
     Customer findByUsernameAndPassword(String username, String password);
 
@@ -22,4 +22,8 @@ public interface CustomerService extends BaseService<Customer,Integer> {
     Customer createCustomer(UserDtoRequest dto);
 
     String changePassword(String username, String oldPassword, String password);
+
+
+    void payThePriceOfCustomerOrderByWallet(CustomerOrder customerOrder);
+
 }

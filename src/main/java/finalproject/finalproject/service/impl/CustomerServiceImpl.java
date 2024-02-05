@@ -6,9 +6,8 @@ import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.Wallet;
-import finalproject.finalproject.exception.InvalidUsernameOrPasswordException;
-import finalproject.finalproject.exception.NullInputException;
-import finalproject.finalproject.exception.TimeException;
+import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
@@ -31,10 +30,12 @@ public class CustomerServiceImpl
         implements CustomerService {
 
     private final WalletServiceImpl walletService;
+    private final CustomerOrderServiceImpl customerOrderService;
 
-    public CustomerServiceImpl(CustomerRepository repository, WalletRepository walletRepository, WalletServiceImpl walletService) {
+    public CustomerServiceImpl(CustomerRepository repository, WalletRepository walletRepository, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService) {
         super(repository);
         this.walletService = walletService;
+        this.customerOrderService = customerOrderService;
     }
 
     //this method is for checking login
@@ -105,6 +106,44 @@ public class CustomerServiceImpl
         repository.save(customer);
         return password;
     }
+
+
+
+    @Override
+    public void payThePriceOfCustomerOrderByWallet(CustomerOrder customerOrder) {
+        double priceOfTheCustomerOrder = customerOrder.getPrice();
+        Customer customer = customerOrder.getCustomer();
+        Expert expert = findApprovedExpert(customerOrder);
+
+        if (expert != null) {
+            Wallet customerWallet = customer.getWallet();
+            Wallet expertWallet = expert.getWallet();
+
+            double customerCredit = customerWallet.getCreditOfWallet();
+
+            if (customerCredit >= priceOfTheCustomerOrder) {
+                double expertShare = priceOfTheCustomerOrder * 0.7;
+
+                customerWallet.setCreditOfWallet(customerCredit - priceOfTheCustomerOrder);
+                expertWallet.setCreditOfWallet(expertWallet.getCreditOfWallet() + expertShare);
+                customerOrder.setStatus(Status.BEEN_PAID);
+                customerOrderService.save(customerOrder);
+            } else {
+                throw new NotEnoughCreditException("Customer does not have enough credit to pay");
+            }
+        } else {
+            throw new StatusException("No approved expert found for this order");
+        }
+    }
+
+    private Expert findApprovedExpert(CustomerOrder customerOrder) {
+        return customerOrder.getSuggestions().stream()
+                .filter(Suggestion::getIsApproved)
+                .map(Suggestion::getExpert)
+                .findFirst()
+                .orElse(null);
+    }
+
 
     @Override
     public Customer save(Customer customer) {

@@ -1,5 +1,6 @@
 package finalproject.finalproject.Entity.user;
 
+import finalproject.finalproject.Entity.Card;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.Wallet;
 import jakarta.persistence.Entity;
@@ -23,5 +24,8 @@ public class Customer extends Person {
 
     @OneToOne
     private Wallet wallet;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Card> card;
 
 }
