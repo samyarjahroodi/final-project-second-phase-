@@ -10,8 +10,8 @@ import java.util.List;
 
 
 @Service
-public interface ExpertService extends PersonService<Expert> {
-/*    double averageStarOfExpert(Expert expert);*/
+public interface ExpertService extends PersonService<Expert>, BaseService<Expert, Integer> {
+    /*    double averageStarOfExpert(Expert expert);*/
 
     void updateRegistrationStatusForSpecificExpert(Expert expert);
 

@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
-public interface BaseService<T extends BaseEntity<Integer>, ID extends Serializable> {
+public interface BaseService<T extends BaseEntity, ID extends Serializable> {
     <S extends T> S save(S entity);
 
     Optional<T> findById(ID id);
@@ -29,4 +29,6 @@ public interface BaseService<T extends BaseEntity<Integer>, ID extends Serializa
     void deleteAll(Iterable<? extends T> entities);
 
     void deleteAll();
+
+    T getReferenceById(ID id);
 }

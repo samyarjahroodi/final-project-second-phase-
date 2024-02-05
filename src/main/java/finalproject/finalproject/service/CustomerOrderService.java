@@ -1,5 +1,7 @@
 package finalproject.finalproject.service;
 
+import ch.qos.logback.core.model.INamedModel;
+import com.fasterxml.jackson.databind.ser.Serializers;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface CustomerOrderService {
+public interface CustomerOrderService extends BaseService<CustomerOrder, Integer> {
 
     List<CustomerOrder> showCustomerOrdersToExpertBasedOnCustomerOrderStatus(Expert expert);
 

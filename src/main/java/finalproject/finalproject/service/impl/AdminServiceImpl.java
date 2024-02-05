@@ -4,6 +4,9 @@ import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.exception.DuplicateException;
+import finalproject.finalproject.exception.NotFoundException;
+import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.*;
 import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
@@ -27,34 +30,32 @@ import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_
 @Service
 public class AdminServiceImpl
         implements AdminService {
-    private final DutyRepository dutyRepository;
-    private final SubDutyRepository subDutyRepository;
-    private final ExpertRepository expertRepository;
-    private final WalletRepository walletRepository;
-    private final ExpertServiceImpl expertService;
     private final AdminRepository adminRepository;
+    private final DutyServiceImpl dutyService;
+    private final WalletServiceImpl walletService;
+    private final ExpertServiceImpl expertService;
     private final SubDutyService subDutyService;
 
 
     public Duty createDuty(DutyDtoRequest dto) {
         if (dto == null) {
-            throw new NullPointerException("dto cannot be null");
+            throw new NullInputException("dto cannot be null");
         }
         String dtoName = dto.getName();
-        if (dutyRepository.findAll().stream().anyMatch(d -> d.getName().equals(dtoName))) {
-            throw new IllegalArgumentException("You already have this duty");
+        if (dutyService.findAll().stream().anyMatch(d -> d.getName().equals(dtoName))) {
+            throw new DuplicateException("You already have this duty");
         }
         Duty duty = Duty.builder()
                 .name(dto.getName())
                 .build();
-        return dutyRepository.save(duty);
+        return dutyService.save(duty);
     }
 
     public SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty) {
-        if (dto == null ) {
-            throw new NullPointerException("dto cannot be null");
+        if (dto == null) {
+            throw new NullInputException("dto cannot be null");
         }
-        Optional<Duty> dutyById = dutyRepository.findById(duty.getId());
+        Optional<Duty> dutyById = dutyService.findById(duty.getId());
         if (dutyById.isPresent()) {
             SubDuty subDuty = SubDuty.builder()
                     .name(dto.getName())
@@ -62,51 +63,51 @@ public class AdminServiceImpl
                     .duty(duty)
                     .price(dto.getPrice())
                     .build();
-            if (subDutyRepository.findAll().stream().anyMatch(s -> s.getName().equals(subDuty.getName()))) {
-                throw new IllegalArgumentException("you already have this sub duty");
+            if (subDutyService.findAll().stream().anyMatch(s -> s.getName().equals(subDuty.getName()))) {
+                throw new DuplicateException("you already have this sub duty");
             }
-            return subDutyRepository.save(subDuty);
+            return subDutyService.save(subDuty);
         } else {
-            throw new InvalidDataAccessApiUsageException("The given id must not be null");
+            throw new NullInputException("The given id must not be null");
         }
     }
 
     public void deleteDuty(Duty duty) {
-        dutyRepository.delete(duty);
+        dutyService.delete(duty);
     }
 
     public List<Duty> showDuties() {
-        return dutyRepository.findAll();
+        return dutyService.findAll();
     }
 
     public List<SubDuty> showSubDuties() {
-        return subDutyRepository.findAll();
+        return subDutyService.findAll();
     }
 
     public void updateDetailsForSubDuty(SubDutyDtoRequest dto, SubDuty subDuty) {
         if (subDuty == null || dto == null) {
-            throw new NoSuchElementException("Sub duty or dto not found");
+            throw new NotFoundException("Sub duty or dto not found");
         }
-        Optional<SubDuty> subDutyById = subDutyRepository.findById(subDuty.getId());
+        Optional<SubDuty> subDutyById = subDutyService.findById(subDuty.getId());
         if (subDutyById.isPresent()) {
             SubDuty existingSubDuty = subDutyById.get();
 
             existingSubDuty.setName(dto.getName());
             existingSubDuty.setDescription(dto.getDescription());
             existingSubDuty.setPrice(dto.getPrice());
-            subDutyRepository.save(existingSubDuty);
+            subDutyService.save(existingSubDuty);
         }
     }
 
 
     public void createExpert(ExpertDtoRequest dto) throws IOException {
         if (dto == null) {
-            throw new IllegalArgumentException("dto cannot be null");
+            throw new NullInputException("dto cannot be null");
         }
         Wallet wallet = Wallet.builder()
                 .creditOfWallet(0)
                 .build();
-        walletRepository.save(wallet);
+        walletService.save(wallet);
 
         Expert expert = Expert.builder()
                 .firstname(dto.getFirstname())
@@ -120,13 +121,13 @@ public class AdminServiceImpl
                 .image(expertService.setImageForExpert(dto.getPathName()))
                 .build();
 
-        expertRepository.save(expert);
+        expertService.save(expert);
     }
 
 
     public void addSubDutyToDutyByAdmin(Duty duty, List<SubDuty> subDuties) {
         if (duty == null || subDuties == null || subDuties.isEmpty()) {
-            throw new IllegalArgumentException("Duty or sub-duties cannot be null or empty");
+            throw new NullInputException("Duty or sub-duties cannot be null or empty");
         }
         duty.setSubDuties(subDuties);
     }
@@ -134,29 +135,29 @@ public class AdminServiceImpl
 
     public void deleteSubDutyFromTheExistDuty(SubDuty subDuty) {
         if (subDuty == null) {
-            throw new IllegalArgumentException("sub duty cannot be null");
+            throw new NullInputException("sub duty cannot be null");
         }
-        subDutyRepository.deleteSubDutyFromTheExistDuty(subDuty);
+        subDutyService.deleteSubDutyFromTheExistDuty(subDuty);
     }
 
     public void deleteSubDutyOFTheSpecificExpert(Expert expert, SubDuty subDuty) {
         if (subDuty == null || expert == null) {
-            throw new IllegalArgumentException("Expert or sub duty cannot be null");
+            throw new NullInputException("Expert or sub duty cannot be null");
         }
         expertService.deleteSubDutyOFTheSpecificExpert(expert, subDuty);
     }
 
     public void deleteExpert(Expert expert) {
         if (expert == null) {
-            throw new IllegalArgumentException("Expert cannot be null");
+            throw new NullInputException("Expert cannot be null");
         }
-        expertRepository.delete(expert);
+        expertService.delete(expert);
     }
 
 
     public void addSubDutyToNewExpert(Expert expert, SubDuty subDuty) {
         if (subDuty == null || expert == null) {
-            throw new IllegalArgumentException("Expert or sub duty cannot be null or empty");
+            throw new NullInputException("Expert or sub duty cannot be null or empty");
         }
         if (subDuty.getExperts() == null) {
             List<Expert> experts = new ArrayList<>();
@@ -168,12 +169,12 @@ public class AdminServiceImpl
             experts1.add(expert);
             changeTheStatusOfExpert(expert);
         }
-        subDutyRepository.save(subDuty);
+        subDutyService.save(subDuty);
     }
 
     public void changeTheStatusOfExpert(Expert expert) {
-        if (expert == null) {
-            throw new IllegalArgumentException("Expert object cannot be null");
+        if (expert == null || expertService.findById(expert.getId()).isEmpty()) {
+            throw new NullInputException("Expert object cannot be null");
         }
         expertService.updateRegistrationStatusForSpecificExpert(expert);
     }
