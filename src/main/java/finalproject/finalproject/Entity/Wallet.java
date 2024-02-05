@@ -1,4 +1,4 @@
-package finalproject.finalproject.Entity.utility;
+package finalproject.finalproject.Entity;
 
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;

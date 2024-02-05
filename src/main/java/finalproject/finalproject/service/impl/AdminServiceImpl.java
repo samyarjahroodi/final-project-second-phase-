@@ -2,9 +2,8 @@ package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
-import finalproject.finalproject.Entity.user.Admin;
 import finalproject.finalproject.Entity.user.Expert;
-import finalproject.finalproject.Entity.utility.Wallet;
+import finalproject.finalproject.Entity.Wallet;
 import finalproject.finalproject.repository.*;
 import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
@@ -13,9 +12,6 @@ import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

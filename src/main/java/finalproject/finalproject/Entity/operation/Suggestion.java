@@ -1,5 +1,6 @@
 package finalproject.finalproject.Entity.operation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import finalproject.finalproject.Entity.user.Expert;
 import jakarta.persistence.Column;
@@ -36,6 +37,7 @@ public class Suggestion extends BaseEntity<Integer> {
     private Boolean isApproved;
 
     @ManyToOne
+    @JsonIgnore
     private Expert expert;
 
 }

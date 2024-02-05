@@ -1,13 +1,12 @@
 package finalproject.finalproject.Entity.user;
 
 import finalproject.finalproject.Entity.operation.Suggestion;
-import finalproject.finalproject.Entity.utility.Wallet;
+import finalproject.finalproject.Entity.Wallet;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 import java.util.List;

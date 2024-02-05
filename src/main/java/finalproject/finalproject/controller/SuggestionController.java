@@ -1,16 +1,13 @@
 package finalproject.finalproject.controller;
 
-import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Expert;
-import finalproject.finalproject.mapper.DutyMapper;
 import finalproject.finalproject.mapper.SuggestionMapper;
 import finalproject.finalproject.repository.CustomerOrderRepository;
 import finalproject.finalproject.repository.ExpertRepository;
-import finalproject.finalproject.service.dto.request.DutyDtoRequest;
+import finalproject.finalproject.repository.SuggestionRepository;
 import finalproject.finalproject.service.dto.request.SuggestionDtoRequest;
-import finalproject.finalproject.service.dto.response.DutyDtoResponse;
 import finalproject.finalproject.service.dto.response.SuggestionDtoResponse;
 import finalproject.finalproject.service.impl.SuggestionServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +23,7 @@ public class SuggestionController {
     private final ExpertRepository expertRepository;
     private final CustomerOrderRepository customerOrderRepository;
     private final SuggestionServiceImpl suggestionService;
+    private final SuggestionRepository suggestionRepository;
     private final ModelMapper modelMapper;
 
     @PostMapping("/create-Suggestion-For-Expert/{expertId}/{customerOrderId}")
@@ -37,5 +35,12 @@ public class SuggestionController {
         suggestionService.createSuggestionForExpert(expertById, dto, customerOrderById);
         SuggestionDtoResponse suggestionDtoResponse = modelMapper.map(suggestion, SuggestionDtoResponse.class);
         return new ResponseEntity<>(suggestionDtoResponse, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/approve-Suggestion/{suggestionId}")
+    public ResponseEntity<String> approveSuggestion(@PathVariable Integer suggestionId) {
+        Suggestion suggestionById = suggestionRepository.getReferenceById(suggestionId);
+        suggestionService.approveSuggestion(suggestionById);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

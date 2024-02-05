@@ -54,15 +54,14 @@ public class CustomerOrderController {
         return customerOrderService.showCustomerOrdersToExpertBasedOnCustomerOrderStatus(expertById);
     }
 
-    //todo complete api test in insomnia
-    @GetMapping("/show-Customer-Order-OfSpecific-Customer-Based-On-Price-Of-Suggestions")
+    //todo how to solve stack over flow bug for suggestions(expert)
+    @GetMapping("/show-Customer-Order-OfSpecific-Customer-Based-On-Price-Of-Suggestions/{customerId}")
     public List<Suggestion> showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(@PathVariable Integer customerId) {
         Customer customerById = customerRepository.getReferenceById(customerId);
         return customerOrderService.showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(customerById);
     }
-
-    //todo complete api test in insomnia
-    @GetMapping("/show-Suggestions-Based-On-Star-Of-Expert")
+    //todo how to solve stack over flow bug for suggestions(expert)
+    @GetMapping("/show-Suggestions-Based-On-Star-Of-Expert/{customerId}")
     public List<Suggestion> showSuggestionsBasedOnStarOfExpert(@PathVariable Integer customerId) {
         Customer customerById = customerRepository.getReferenceById(customerId);
         return customerOrderService.showSuggestionsBasedOnStarOfExpert(customerById);

@@ -27,6 +27,7 @@ public class SuggestionServiceImpl
     private final SuggestionRepository suggestionRepository;
     private final CustomerOrderRepository customerOrderRepository;
 
+    @Override
     public void createSuggestionForExpert(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) throws Exception {
         List<SubDuty> subDuties = suggestionRepository.giveSubDutiesOfExpert(expert);
         if (!subDuties.contains(customerOrder.getSubDuty())) {

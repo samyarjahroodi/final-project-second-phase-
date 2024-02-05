@@ -5,7 +5,7 @@ import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
-import finalproject.finalproject.Entity.utility.Wallet;
+import finalproject.finalproject.Entity.Wallet;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
@@ -46,7 +46,7 @@ public class CustomerServiceImpl
         }
         customerOrder.setStatus(Status.WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE);
     }
-
+    @Override
     public void changeStatusToStarted(CustomerOrder customerOrder, Suggestion suggestion, LocalDate timeToStartTheProject) {
         if (customerOrder == null || suggestion == null || timeToStartTheProject == null) {
             throw new IllegalArgumentException("customerOrder,suggestion,time to start the project cannot be null");

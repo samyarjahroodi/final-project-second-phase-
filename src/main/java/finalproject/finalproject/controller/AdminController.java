@@ -16,6 +16,7 @@ import finalproject.finalproject.service.dto.response.DutyDtoResponse;
 import finalproject.finalproject.service.dto.response.ExpertDtoResponse;
 import finalproject.finalproject.service.dto.response.SubDutyDtoResponse;
 import finalproject.finalproject.service.impl.AdminServiceImpl;
+import finalproject.finalproject.service.impl.ExpertServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,7 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
     private final AdminServiceImpl adminService;
+    private final ExpertServiceImpl expertService;
     private final DutyRepository dutyRepository;
     private final ModelMapper modelMapper;
     private final SubDutyRepository subDutyRepository;
@@ -63,6 +65,11 @@ public class AdminController {
     @GetMapping("/duties")
     public List<Duty> showDuties() {
         return adminService.showDuties();
+    }
+
+    @GetMapping("/experts")
+    public List<Expert> showExpert() {
+        return expertService.showExpert();
     }
 
     @GetMapping("/sub-duties")

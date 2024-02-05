@@ -5,6 +5,9 @@ import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.List;
+
 
 @Service
 public interface ExpertService extends PersonService<Expert> {
@@ -13,4 +16,10 @@ public interface ExpertService extends PersonService<Expert> {
     void updateRegistrationStatusForSpecificExpert(Expert expert);
 
     void deleteSubDutyOFTheSpecificExpert(Expert expert, SubDuty subDuty);
+
+    List<Expert> showExpert();
+
+    void saveImageToFolder(byte[] imageData, String folderPath, String fileName) throws IOException;
+
+    byte[] setImageForExpert(String pathname) throws IOException;
 }

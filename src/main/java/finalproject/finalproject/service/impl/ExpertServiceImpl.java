@@ -53,12 +53,12 @@ public class ExpertServiceImpl
         subDutyRepository.save(subDuty);
     }
 
-
+    @Override
     public List<Expert> showExpert() {
         return repository.findAll();
     }
 
-
+    @Override
     public void saveImageToFolder(byte[] imageData, String folderPath, String fileName) throws IOException {
         File folder = new File(folderPath);
         if (!folder.exists()) {
@@ -68,7 +68,7 @@ public class ExpertServiceImpl
         Files.write(imagePath, imageData);
     }
 
-
+    @Override
     public byte[] setImageForExpert(String pathname) throws IOException {
         if (pathname == null) {
             throw new IllegalArgumentException("Pathname cannot be null");
