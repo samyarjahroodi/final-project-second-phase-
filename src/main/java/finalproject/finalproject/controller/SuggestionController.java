@@ -4,11 +4,10 @@ import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.mapper.SuggestionMapper;
-import finalproject.finalproject.repository.CustomerOrderRepository;
-import finalproject.finalproject.repository.ExpertRepository;
-import finalproject.finalproject.repository.SuggestionRepository;
 import finalproject.finalproject.service.dto.request.SuggestionDtoRequest;
 import finalproject.finalproject.service.dto.response.SuggestionDtoResponse;
+import finalproject.finalproject.service.impl.CustomerOrderServiceImpl;
+import finalproject.finalproject.service.impl.ExpertServiceImpl;
 import finalproject.finalproject.service.impl.SuggestionServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -20,18 +19,17 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/suggestion")
 public class SuggestionController {
-    private final ExpertRepository expertRepository;
-    private final CustomerOrderRepository customerOrderRepository;
+    private final ExpertServiceImpl expertService;
+    private final CustomerOrderServiceImpl customerOrderService;
     private final SuggestionServiceImpl suggestionService;
-    private final SuggestionRepository suggestionRepository;
     private final ModelMapper modelMapper;
 
     @PostMapping("/create-Suggestion-For-Expert/{expertId}/{customerOrderId}")
     public ResponseEntity<SuggestionDtoResponse> createSuggestionForExpert(@PathVariable Integer expertId
             , @RequestBody SuggestionDtoRequest dto, @PathVariable Integer customerOrderId) throws Exception {
         Suggestion suggestion = SuggestionMapper.INSTANCE.requestDtoToModel(dto);
-        Expert expertById = expertRepository.getReferenceById(expertId);
-        CustomerOrder customerOrderById = customerOrderRepository.getReferenceById(customerOrderId);
+        Expert expertById = expertService.getReferenceById(expertId);
+        CustomerOrder customerOrderById = customerOrderService.getReferenceById(customerOrderId);
         suggestionService.createSuggestionForExpert(expertById, dto, customerOrderById);
         SuggestionDtoResponse suggestionDtoResponse = modelMapper.map(suggestion, SuggestionDtoResponse.class);
         return new ResponseEntity<>(suggestionDtoResponse, HttpStatus.CREATED);
@@ -39,7 +37,7 @@ public class SuggestionController {
 
     @PutMapping("/approve-Suggestion/{suggestionId}")
     public ResponseEntity<String> approveSuggestion(@PathVariable Integer suggestionId) {
-        Suggestion suggestionById = suggestionRepository.getReferenceById(suggestionId);
+        Suggestion suggestionById = suggestionService.getReferenceById(suggestionId);
         suggestionService.approveSuggestion(suggestionById);
         return new ResponseEntity<>(HttpStatus.OK);
     }

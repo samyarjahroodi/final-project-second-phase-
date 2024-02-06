@@ -64,14 +64,16 @@ class CustomerServiceImplTest extends BaseTest {
         SubDuty subDuty = createSubDuty(1500);
         CustomerOrder customerOrder =
                 createCustomerOrder(1900, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
-        customerService.changeStatusOfCustomerOrderToFinished(customerOrder);
+        LocalDate localDate = LocalDate.of(2024, 02, 9);
+        customerService.changeStatusOfCustomerOrderToFinished(customerOrder,localDate );
         Assertions.assertEquals(Status.FINISHED, customerOrder.getStatus());
     }
 
     @Test
     void changeStatusOfCustomerOrderToFinishedWhenCustomerIsNull() {
+        LocalDate localDate = LocalDate.of(2024, 02, 9);
         IllegalArgumentException illegalArgumentException =
-                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusOfCustomerOrderToFinished(null));
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusOfCustomerOrderToFinished(null,localDate));
         Assertions.assertEquals("customerOrder cannot be null", illegalArgumentException.getMessage());
     }
 
@@ -100,7 +102,7 @@ class CustomerServiceImplTest extends BaseTest {
     void changePasswordWhenUsernameOrOldPasswordOrNewPasswordIsNull() {
         Customer customer = createCustomer();
         IllegalArgumentException illegalArgumentException =
-                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changePassword(null,customer.getPassword(),null));
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changePassword(null, customer.getPassword(), null));
         Assertions.assertEquals("username , old password , new password cannot be null", illegalArgumentException.getMessage());
     }
 

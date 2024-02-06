@@ -15,4 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class Wallet extends BaseEntity<Integer> {
     private double creditOfWallet;
 
+    @Builder.Default
+    private boolean isActive = true;
+
 }

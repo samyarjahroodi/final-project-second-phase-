@@ -15,6 +15,7 @@ import finalproject.finalproject.repository.CustomerOrderRepository;
 import finalproject.finalproject.service.CustomerOrderService;
 import finalproject.finalproject.service.dto.request.CustomerOrderDtoRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +32,12 @@ import java.util.Optional;
 public class CustomerOrderServiceImpl
         implements CustomerOrderService {
     private final CustomerOrderRepository customerOrderRepository;
+    private final CustomerServiceImpl customerService;
 
     @Autowired
-    public CustomerOrderServiceImpl(CustomerOrderRepository customerOrderRepository) {
+    public CustomerOrderServiceImpl(CustomerOrderRepository customerOrderRepository, @Lazy CustomerServiceImpl customerService) {
         this.customerOrderRepository = customerOrderRepository;
+        this.customerService = customerService;
     }
 
     @Override
@@ -56,6 +61,28 @@ public class CustomerOrderServiceImpl
                 .build();
 
         return customerOrderRepository.save(customerOrder);
+    }
+
+    @Override
+    public void reduceStarsOfExpertIfNeeded(CustomerOrder customerOrder) {
+        Suggestion suggestion = findSuggestionThatIsApproved(customerOrder);
+        Expert approvedExpert = customerService.findApprovedExpert(customerOrder);
+        LocalDate localDate = suggestion.getSuggestedTimeToStartTheProject().plusDays(suggestion.getDaysThatTaken());
+        if (customerOrder.getTimeThatStatusChangedToFinished().isAfter(localDate)) {
+            Duration duration = Duration.between(customerOrder.getTimeThatStatusChangedToFinished(), localDate);
+            long hoursDifference = duration.toHours();
+            Double star = approvedExpert.getStar();
+            if (hoursDifference > star) {
+                approvedExpert.getWallet().setActive(false);
+            }
+        }
+    }
+
+    public Suggestion findSuggestionThatIsApproved(CustomerOrder customerOrder) {
+        return customerOrder.getSuggestions().stream()
+                .filter(Suggestion::getIsApproved)
+                .findFirst()
+                .orElse(null);
     }
 
     public void validatePrice(SubDuty subDuty, CustomerOrderDtoRequest dto) {

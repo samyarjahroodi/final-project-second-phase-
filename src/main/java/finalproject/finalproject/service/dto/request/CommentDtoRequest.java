@@ -1,5 +1,7 @@
 package finalproject.finalproject.service.dto.request;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,15 +13,11 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 
-public class CardDtoRequest {
-    String cardNumber;
+public class CommentDtoRequest {
+    private String comment;
 
-    int month;
-
-    int year;
-
-    int cvv2;
-
-    int password;
+    @Max(5)
+    @Min(0)
+    private Double star;
 
 }

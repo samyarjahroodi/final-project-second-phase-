@@ -7,56 +7,56 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler
+    @ExceptionHandler(DuplicateException.class)
     public ResponseEntity<String> duplicateExceptionHandler(DuplicateException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NullInputException.class)
     public ResponseEntity<String> nullInputException(NullInputException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> notFoundException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(TimeException.class)
     public ResponseEntity<String> timeException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(PriceException.class)
     public ResponseEntity<String> priceException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(InvalidUsernameOrPasswordException.class)
     public ResponseEntity<String> invalidUsernameOrPasswordException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotValidFormatFileException.class)
     public ResponseEntity<String> notValidFormatFileException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(NotValidSizeException.class)
     public ResponseEntity<String> notValidSizeException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(PermissionException.class)
     public ResponseEntity<String> permissionException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(StatusException.class)
     public ResponseEntity<String> statusException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
-    @ExceptionHandler
+    @ExceptionHandler(NotEnoughCreditException.class)
     public ResponseEntity<String> notEnoughCreditException(NotFoundException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }

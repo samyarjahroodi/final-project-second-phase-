@@ -9,4 +9,9 @@ public class FinalProjectApplication {
     public static void main(String[] args) {
         SpringApplication.run(FinalProjectApplication.class, args);
     }
+    //todo :complete api
+    //todo : complete validation of card
+    //todo : complete dto of service methods
+    //todo : validation of
+
 }

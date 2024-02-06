@@ -23,4 +23,6 @@ public interface CustomerOrderService extends BaseService<CustomerOrder, Integer
     List<Suggestion> showSuggestionsBasedOnStarOfExpert(Customer customer);
 
     CustomerOrder publishOrder(Customer customer, CustomerOrderDtoRequest dto, Duty duty, SubDuty subDuty);
+
+    void reduceStarsOfExpertIfNeeded(CustomerOrder customerOrder);
 }

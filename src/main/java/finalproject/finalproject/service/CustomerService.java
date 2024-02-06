@@ -1,8 +1,11 @@
 package finalproject.finalproject.service;
 
+import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
+import finalproject.finalproject.service.dto.request.CommentDtoRequest;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +20,16 @@ public interface CustomerService extends BaseService<Customer, Integer> {
 
     void changeStatusToStarted(CustomerOrder customerOrder, Suggestion suggestion, LocalDate timeToStartTheProject);
 
-    void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder);
+    void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, LocalDate localDate);
 
     Customer createCustomer(UserDtoRequest dto);
 
     String changePassword(String username, String oldPassword, String password);
 
-
     void payThePriceOfCustomerOrderByWallet(CustomerOrder customerOrder);
+
+    void payThePriceOfCustomerOrderOnline(CustomerOrder customerOrder, Card card);
+
+    Comment submitComment(CustomerOrder customerOrder, CommentDtoRequest commentDtoRequest);
 
 }

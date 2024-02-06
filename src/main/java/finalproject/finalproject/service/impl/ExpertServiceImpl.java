@@ -29,7 +29,6 @@ import java.util.Optional;
 
 @Service
 @Primary
-
 @Transactional(readOnly = true)
 public class ExpertServiceImpl
         extends PersonServiceImpl<Expert, ExpertRepository>

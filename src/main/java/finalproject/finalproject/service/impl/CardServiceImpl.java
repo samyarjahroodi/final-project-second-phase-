@@ -1,9 +1,11 @@
 package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.repository.CardRepository;
 import finalproject.finalproject.service.CardService;
 
+import finalproject.finalproject.service.dto.request.CardDtoRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +24,20 @@ import java.util.Optional;
 public class CardServiceImpl
         implements CardService {
     private final CardRepository cardRepository;
+    private final CustomerServiceImpl customerService;
+
+    public void creatCard(Customer customer, CardDtoRequest cardDtoRequest) {
+        Card card = new Card();
+        Card.builder()
+                .cardNumber(cardDtoRequest.getCardNumber())
+                .cvv2(cardDtoRequest.getCvv2())
+                .password(cardDtoRequest.getPassword())
+                .expireDate(LocalDate.of(cardDtoRequest.getYear(), cardDtoRequest.getMonth(), 00))
+                .build();
+        cardRepository.save(card);
+        customer.setCard(Collections.singletonList(card));
+        customerService.save(customer);
+    }
 
     @Override
     public <S extends Card> S save(S entity) {

@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @SuperBuilder
-@AllArgsConstructor
+/*@AllArgsConstructor*/
 @NoArgsConstructor
 @Getter
 @Setter
@@ -28,4 +28,9 @@ public class Customer extends Person {
     @OneToMany(mappedBy = "customer")
     private List<Card> card;
 
+    public Customer(List<CustomerOrder> orders, Wallet wallet, List<Card> card) {
+        this.orders = orders;
+        this.wallet = wallet;
+        this.card = card;
+    }
 }

@@ -8,7 +8,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
-import java.util.Optional;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -31,7 +30,6 @@ public class SubDuty extends BaseEntity<Integer> {
     @JoinColumn()
     private Duty duty;
 
-
     @ManyToMany
     @JoinTable(name = "SubDuty_expert")
     private List<Expert> experts;
@@ -49,5 +47,4 @@ public class SubDuty extends BaseEntity<Integer> {
                 ", experts=" + experts +
                 '}';
     }
-
 }

@@ -1,6 +1,8 @@
 package finalproject.finalproject.service.impl;
 
 
+import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
@@ -11,10 +13,12 @@ import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
+import finalproject.finalproject.service.dto.request.CommentDtoRequest;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +35,16 @@ public class CustomerServiceImpl
 
     private final WalletServiceImpl walletService;
     private final CustomerOrderServiceImpl customerOrderService;
+    private final ExpertServiceImpl expertService;
+    private final CommentServiceImpl commentService;
 
-    public CustomerServiceImpl(CustomerRepository repository, WalletRepository walletRepository, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService) {
+    public CustomerServiceImpl(CustomerRepository repository, WalletRepository walletRepository, WalletServiceImpl walletService,
+                               CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService, CommentServiceImpl commentService) {
         super(repository);
         this.walletService = walletService;
         this.customerOrderService = customerOrderService;
+        this.expertService = expertService;
+        this.commentService = commentService;
     }
 
     //this method is for checking login
@@ -67,12 +76,14 @@ public class CustomerServiceImpl
         customerOrder.setStatus(Status.STARTED);
     }
 
+    //local date should be now but for testing we need to get local date from customer
     @Override
-    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder) {
+    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, LocalDate localDate) {
         if (customerOrder == null) {
             throw new NullInputException("customerOrder cannot be null");
         }
         customerOrder.setStatus(Status.FINISHED);
+        customerOrder.setTimeThatStatusChangedToFinished(localDate);
     }
 
     public Customer createCustomer(UserDtoRequest dto) {
@@ -108,35 +119,74 @@ public class CustomerServiceImpl
     }
 
 
-
     @Override
     public void payThePriceOfCustomerOrderByWallet(CustomerOrder customerOrder) {
-        double priceOfTheCustomerOrder = customerOrder.getPrice();
-        Customer customer = customerOrder.getCustomer();
-        Expert expert = findApprovedExpert(customerOrder);
+        if (customerOrder == null) {
+            throw new NullInputException("customer Order cannot be null");
+        }
+        if (customerOrder.getStatus() == Status.FINISHED) {
+            double priceOfTheCustomerOrder = customerOrder.getPrice();
+            Customer customer = customerOrder.getCustomer();
+            Expert expert = findApprovedExpert(customerOrder);
 
-        if (expert != null) {
-            Wallet customerWallet = customer.getWallet();
-            Wallet expertWallet = expert.getWallet();
+            if (expert != null) {
+                Wallet customerWallet = customer.getWallet();
+                Wallet expertWallet = expert.getWallet();
 
-            double customerCredit = customerWallet.getCreditOfWallet();
+                double customerCredit = customerWallet.getCreditOfWallet();
 
-            if (customerCredit >= priceOfTheCustomerOrder) {
-                double expertShare = priceOfTheCustomerOrder * 0.7;
+                if (customerCredit >= priceOfTheCustomerOrder) {
+                    double expertShare = priceOfTheCustomerOrder * 0.7;
 
-                customerWallet.setCreditOfWallet(customerCredit - priceOfTheCustomerOrder);
-                expertWallet.setCreditOfWallet(expertWallet.getCreditOfWallet() + expertShare);
-                customerOrder.setStatus(Status.BEEN_PAID);
-                customerOrderService.save(customerOrder);
+                    customerWallet.setCreditOfWallet(customerCredit - priceOfTheCustomerOrder);
+                    expertWallet.setCreditOfWallet(expertWallet.getCreditOfWallet() + expertShare);
+                    customerOrder.setStatus(Status.BEEN_PAID);
+                    customerOrderService.save(customerOrder);
+                } else {
+                    throw new NotEnoughCreditException("Customer does not have enough credit to pay");
+                }
             } else {
-                throw new NotEnoughCreditException("Customer does not have enough credit to pay");
+                throw new StatusException("No approved expert found for this order");
             }
         } else {
-            throw new StatusException("No approved expert found for this order");
+            throw new StatusException("your order has not done yet");
         }
     }
 
-    private Expert findApprovedExpert(CustomerOrder customerOrder) {
+    @Modifying
+    @Override
+    public void payThePriceOfCustomerOrderOnline(CustomerOrder customerOrder, Card card) {
+        if (customerOrder == null || card == null) {
+            throw new NullInputException("customer Order and card cannot be null");
+        }
+        Suggestion suggestionThatIsApproved = customerOrderService.findSuggestionThatIsApproved(customerOrder);
+        if (card.getMoney() > suggestionThatIsApproved.getSuggestedPrice()) {
+            int suggestedPrice = suggestionThatIsApproved.getSuggestedPrice();
+            Expert approvedExpert = findApprovedExpert(customerOrder);
+            card.setMoney(card.getMoney() - suggestionThatIsApproved.getSuggestedPrice());
+            double creditOfWallet = approvedExpert.getWallet().getCreditOfWallet();
+            approvedExpert.getWallet().setCreditOfWallet(creditOfWallet + 0.7 * suggestedPrice);
+            customerOrder.setStatus(Status.BEEN_PAID);
+            customerOrderService.save(customerOrder);
+            expertService.save(approvedExpert);
+        }
+    }
+
+    @Override
+    public Comment submitComment(CustomerOrder customerOrder, CommentDtoRequest commentDtoRequest) {
+        if (customerOrder == null || commentDtoRequest == null) {
+            throw new NullInputException("customer order or comment dto could not be null");
+        }
+        Comment comment = Comment.builder()
+                .comment(commentDtoRequest.getComment())
+                .star(commentDtoRequest.getStar())
+                .customerOrder(customerOrder)
+                .build();
+        commentService.save(comment);
+        return comment;
+    }
+
+    public Expert findApprovedExpert(CustomerOrder customerOrder) {
         return customerOrder.getSuggestions().stream()
                 .filter(Suggestion::getIsApproved)
                 .map(Suggestion::getExpert)
@@ -144,8 +194,6 @@ public class CustomerServiceImpl
                 .orElse(null);
     }
 
-
-    @Override
     public Customer save(Customer customer) {
         return repository.save(customer);
     }

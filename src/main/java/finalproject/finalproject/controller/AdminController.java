@@ -6,9 +6,6 @@ import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.mapper.DutyMapper;
 import finalproject.finalproject.mapper.ExpertMapper;
 import finalproject.finalproject.mapper.SubDutyMapper;
-import finalproject.finalproject.repository.DutyRepository;
-import finalproject.finalproject.repository.ExpertRepository;
-import finalproject.finalproject.repository.SubDutyRepository;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
@@ -16,7 +13,9 @@ import finalproject.finalproject.service.dto.response.DutyDtoResponse;
 import finalproject.finalproject.service.dto.response.ExpertDtoResponse;
 import finalproject.finalproject.service.dto.response.SubDutyDtoResponse;
 import finalproject.finalproject.service.impl.AdminServiceImpl;
+import finalproject.finalproject.service.impl.DutyServiceImpl;
 import finalproject.finalproject.service.impl.ExpertServiceImpl;
+import finalproject.finalproject.service.impl.SubDutyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -33,10 +32,9 @@ import java.util.List;
 public class AdminController {
     private final AdminServiceImpl adminService;
     private final ExpertServiceImpl expertService;
-    private final DutyRepository dutyRepository;
+    private final DutyServiceImpl dutyService;
     private final ModelMapper modelMapper;
-    private final SubDutyRepository subDutyRepository;
-    private final ExpertRepository expertRepository;
+    private final SubDutyServiceImpl subDutyService;
 
 
     @PostMapping("/create-duty")
@@ -50,7 +48,7 @@ public class AdminController {
     @PostMapping("/create-sub-duty/{id}")
     public ResponseEntity<SubDutyDtoResponse> createSubDuty(@RequestBody SubDutyDtoRequest dto, @PathVariable Integer id) {
         SubDuty subDuty = SubDutyMapper.INSTANCE.requestDtoToModel(dto);
-        Duty referenceById = dutyRepository.getReferenceById(id);
+        Duty referenceById = dutyService.getReferenceById(id);
         adminService.createSubDuty(dto, referenceById);
         SubDutyDtoResponse subDutyDtoResponse = modelMapper.map(subDuty, SubDutyDtoResponse.class);
         return new ResponseEntity<>(subDutyDtoResponse, HttpStatus.CREATED);
@@ -58,7 +56,7 @@ public class AdminController {
 
     @DeleteMapping("/delete-duty/{id}")
     public void deleteDuty(@PathVariable Integer id) {
-        Duty referenceById = dutyRepository.getReferenceById(id);
+        Duty referenceById = dutyService.getReferenceById(id);
         adminService.deleteDuty(referenceById);
     }
 
@@ -80,7 +78,7 @@ public class AdminController {
     @PutMapping("/updateDetailsForSubDuty/{id}")
     public ResponseEntity<SubDutyDtoResponse> updateDetailsForSubDuty(@RequestBody SubDutyDtoRequest dto, @PathVariable Integer id) {
         SubDuty subDuty = SubDutyMapper.INSTANCE.requestDtoToModel(dto);
-        SubDuty referenceById = subDutyRepository.getReferenceById(id);
+        SubDuty referenceById = subDutyService.getReferenceById(id);
         adminService.updateDetailsForSubDuty(dto, referenceById);
         SubDutyDtoResponse subDutyDtoResponse = modelMapper.map(subDuty, SubDutyDtoResponse.class);
         return new ResponseEntity<>(subDutyDtoResponse, HttpStatus.OK);
@@ -96,37 +94,37 @@ public class AdminController {
 
     @PutMapping("/add-Sub-Duty-To-New-Expert/{expertId}/{subDutyId}")
     public ResponseEntity<String> addSubDutyToNewExpert(@PathVariable Integer expertId, @PathVariable Integer subDutyId) {
-        Expert expertById = expertRepository.getReferenceById(expertId);
-        SubDuty subDutyById = subDutyRepository.getReferenceById(subDutyId);
+        Expert expertById = expertService.getReferenceById(expertId);
+        SubDuty subDutyById = subDutyService.getReferenceById(subDutyId);
         adminService.addSubDutyToNewExpert(expertById, subDutyById);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete-Sub-Duty-From-The-Exist-Duty/{id}")
     public ResponseEntity<String> deleteSubDutyFromTheExistDuty(@PathVariable Integer id) {
-        SubDuty subDutyById = subDutyRepository.getReferenceById(id);
+        SubDuty subDutyById = subDutyService.getReferenceById(id);
         adminService.deleteSubDutyFromTheExistDuty(subDutyById);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-Sub-Duty-OF-The-Specific-Expert/{subDutyId}/{expertId}")
     public ResponseEntity<String> deleteSubDutyOFTheSpecificExpert(@PathVariable Integer subDutyId, @PathVariable Integer expertId) {
-        SubDuty subDutyById = subDutyRepository.getReferenceById(subDutyId);
-        Expert expertById = expertRepository.getReferenceById(expertId);
+        SubDuty subDutyById = subDutyService.getReferenceById(subDutyId);
+        Expert expertById = expertService.getReferenceById(expertId);
         adminService.deleteSubDutyOFTheSpecificExpert(expertById, subDutyById);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-Expert/{expertId}")
     public ResponseEntity<String> deleteExpert(@PathVariable Integer expertId) {
-        Expert expertById = expertRepository.getReferenceById(expertId);
+        Expert expertById = expertService.getReferenceById(expertId);
         adminService.deleteExpert(expertById);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/change-The-Status-Of-Expert/{expertId}")
     public ResponseEntity<String> changeTheStatusOfExpert(@PathVariable Integer expertId) {
-        Expert expertById = expertRepository.getReferenceById(expertId);
+        Expert expertById = expertService.getReferenceById(expertId);
         adminService.changeTheStatusOfExpert(expertById);
         return new ResponseEntity<>(HttpStatus.OK);
     }

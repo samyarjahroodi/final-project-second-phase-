@@ -52,4 +52,6 @@ public class CustomerOrder extends BaseEntity<Integer> {
     @JsonIgnore
     private List<Suggestion> suggestions;
 
+    private LocalDate timeThatStatusChangedToFinished;
+
 }

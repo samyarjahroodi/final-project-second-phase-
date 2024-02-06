@@ -2,7 +2,6 @@ package finalproject.finalproject.controller;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
-import finalproject.finalproject.repository.DutyRepository;
 import finalproject.finalproject.service.impl.DutyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/duty")
 public class DutyController {
-    private final DutyRepository dutyRepository;
     private final DutyServiceImpl dutyService;
 
     @GetMapping("/show-Sub-Duties-Of-Specific-Duty/{dutyId}")
     public List<SubDuty> showSubDutiesOfSpecificDuty(@PathVariable Integer dutyId) {
-        Duty dutyById = dutyRepository.getReferenceById(dutyId);
+        Duty dutyById = dutyService.getReferenceById(dutyId);
         return dutyService.showSubDutiesOfSpecificDuty(dutyById);
     }
 }
