@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.stereotype.Service;
 
 
@@ -33,6 +34,9 @@ public class SuggestionServiceImpl
 
     @Override
     public void createSuggestionForExpert(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) throws Exception {
+        if (isThereAnyApproveSuggestion(customerOrder)) {
+            throw new StatusException("This suggestion has already been approved");
+        }
         List<SubDuty> subDuties = suggestionRepository.giveSubDutiesOfExpert(expert);
         if (!subDuties.contains(customerOrder.getSubDuty())) {
             throw new PermissionException("you dont have this permission to create a suggestion because you dont have this sub duty");
@@ -60,6 +64,15 @@ public class SuggestionServiceImpl
         } else {
             throw new StatusException("Whether the status is WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE,STARTED,FINISHED or BEEN_PAID");
         }
+    }
+
+    private boolean isThereAnyApproveSuggestion(CustomerOrder customerOrder) {
+        for (Suggestion suggestion : customerOrder.getSuggestions()) {
+            if (suggestion.getIsApproved().equals(true)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

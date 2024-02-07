@@ -4,10 +4,12 @@ import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
+@Service
 
 public interface BaseService<T extends BaseEntity, ID extends Serializable> {
     <S extends T> S save(S entity);

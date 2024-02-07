@@ -43,24 +43,30 @@ public class CustomerOrderController {
         return new ResponseEntity<>(customerOrderDtoResponse, HttpStatus.CREATED);
     }
 
-    //todo see customerOrder and in to string implement duty and subDuty
     @GetMapping("/show-Customer-Orders-To-Expert-Based-On-Customer-Order-Status/{expertId}")
     public List<CustomerOrder> showCustomerOrdersToExpertBasedOnCustomerOrderStatus(@PathVariable Integer expertId) {
         Expert expertById = expertService.getReferenceById(expertId);
         return customerOrderService.showCustomerOrdersToExpertBasedOnCustomerOrderStatus(expertById);
     }
 
-    //todo how to solve stack over flow bug for suggestions(expert)
     @GetMapping("/show-Customer-Order-OfSpecific-Customer-Based-On-Price-Of-Suggestions/{customerId}")
     public List<Suggestion> showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(@PathVariable Integer customerId) {
         Customer customerById = customerService.getReferenceById(customerId);
         return customerOrderService.showCustomerOrderOfSpecificCustomerBasedOnPriceOfSuggestions(customerById);
     }
-    //todo how to solve stack over flow bug for suggestions(expert)
+
     @GetMapping("/show-Suggestions-Based-On-Star-Of-Expert/{customerId}")
     public List<Suggestion> showSuggestionsBasedOnStarOfExpert(@PathVariable Integer customerId) {
         Customer customerById = customerService.getReferenceById(customerId);
         return customerOrderService.showSuggestionsBasedOnStarOfExpert(customerById);
     }
+
+    @PutMapping("/reduce-Stars-Of-Expert-If-Needed/{customerId}")
+    public ResponseEntity<String> reduceStarsOfExpertIfNeeded(@PathVariable Integer customerId) {
+        CustomerOrder customerOrderById = customerOrderService.getReferenceById(customerId);
+        customerOrderService.reduceStarsOfExpertIfNeeded(customerOrderById);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
 

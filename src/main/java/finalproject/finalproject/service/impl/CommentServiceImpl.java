@@ -1,8 +1,13 @@
 package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.operation.Comment;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.operation.Status;
+import finalproject.finalproject.Entity.user.Customer;
+import finalproject.finalproject.exception.StatusException;
 import finalproject.finalproject.repository.CommentRepository;
 import finalproject.finalproject.service.CommentService;
+import finalproject.finalproject.service.dto.request.CommentDtoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,9 +20,25 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
+    private final CustomerOrderServiceImpl customerOrderService;
+
+    @Override
+    public Comment addCommentForCustomerId(CustomerOrder customerOrder, CommentDtoRequest dto) {
+        if (customerOrder.getStatus().equals(Status.BEEN_PAID)) {
+            Comment comment = Comment.builder()
+                    .comment(dto.getComment())
+                    .star(dto.getStar())
+                    .customerOrder(customerOrder)
+                    .build();
+            commentRepository.save(comment);
+            return comment;
+        } else {
+            throw new StatusException("status is not being paid");
+        }
+    }
 
     @Override
     @Transactional
@@ -78,4 +99,6 @@ public class CommentServiceImpl implements CommentService {
     public Comment getReferenceById(Integer integer) {
         return commentRepository.getReferenceById(integer);
     }
+
+
 }

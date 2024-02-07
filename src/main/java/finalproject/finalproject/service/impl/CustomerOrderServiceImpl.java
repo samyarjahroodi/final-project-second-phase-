@@ -25,6 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +38,15 @@ public class CustomerOrderServiceImpl
         implements CustomerOrderService {
     private final CustomerOrderRepository customerOrderRepository;
     private final CustomerServiceImpl customerService;
+    private final WalletServiceImpl walletService;
+    private final ExpertServiceImpl expertService;
 
     @Autowired
-    public CustomerOrderServiceImpl(CustomerOrderRepository customerOrderRepository, @Lazy CustomerServiceImpl customerService) {
+    public CustomerOrderServiceImpl(CustomerOrderRepository customerOrderRepository, @Lazy CustomerServiceImpl customerService, WalletServiceImpl walletService, ExpertServiceImpl expertService) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerService = customerService;
+        this.walletService = walletService;
+        this.expertService = expertService;
     }
 
     @Override
@@ -59,24 +68,35 @@ public class CustomerOrderServiceImpl
                 .price(dto.getPrice())
                 .timeOfOrder(dto.getTimeOfOrder())
                 .build();
-
+        customerService.save(customer);
         return customerOrderRepository.save(customerOrder);
     }
 
     @Override
+    @Transactional
     public void reduceStarsOfExpertIfNeeded(CustomerOrder customerOrder) {
         Suggestion suggestion = findSuggestionThatIsApproved(customerOrder);
         Expert approvedExpert = customerService.findApprovedExpert(customerOrder);
-        LocalDate localDate = suggestion.getSuggestedTimeToStartTheProject().plusDays(suggestion.getDaysThatTaken());
-        if (customerOrder.getTimeThatStatusChangedToFinished().isAfter(localDate)) {
-            Duration duration = Duration.between(customerOrder.getTimeThatStatusChangedToFinished(), localDate);
-            long hoursDifference = duration.toHours();
-            Double star = approvedExpert.getStar();
-            if (hoursDifference > star) {
-                approvedExpert.getWallet().setActive(false);
+
+        ZonedDateTime suggestedTime = ZonedDateTime.from(suggestion.getSuggestedTimeToStartTheProject().atStartOfDay().plusDays(suggestion.getDaysThatTaken()));
+        ZonedDateTime timeThatStatusChangedToFinished = ZonedDateTime.from(customerOrder.getTimeThatStatusChangedToFinished().atStartOfDay());
+
+        if (timeThatStatusChangedToFinished.isAfter(suggestedTime)) {
+            long hoursDifference = Duration.between(suggestedTime, timeThatStatusChangedToFinished).toHours();
+            for (int i = 0; i < hoursDifference; i++) {
+                double star = approvedExpert.getStar();
+                approvedExpert.setStar(star - i);
+                expertService.save(approvedExpert);
+                if (hoursDifference > star) {
+                    approvedExpert.getWallet().setActive(false);
+                    expertService.save(approvedExpert);
+                    break;
+                }
             }
         }
     }
+
+
 
     public Suggestion findSuggestionThatIsApproved(CustomerOrder customerOrder) {
         return customerOrder.getSuggestions().stream()

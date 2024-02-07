@@ -1,6 +1,6 @@
 package finalproject.finalproject.service;
 
-import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.payment.Card;
 import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
@@ -30,6 +30,5 @@ public interface CustomerService extends BaseService<Customer, Integer> {
 
     void payThePriceOfCustomerOrderOnline(CustomerOrder customerOrder, Card card);
 
-    Comment submitComment(CustomerOrder customerOrder, CommentDtoRequest commentDtoRequest);
 
 }

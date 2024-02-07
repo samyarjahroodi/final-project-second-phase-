@@ -1,6 +1,6 @@
 package finalproject.finalproject.repository;
 
-import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.Entity.payment.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

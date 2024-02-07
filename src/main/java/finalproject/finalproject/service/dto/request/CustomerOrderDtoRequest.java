@@ -26,9 +26,8 @@ public class CustomerOrderDtoRequest {
     @PositiveOrZero
     private double price;
 
-    @NotNull(message = "Time of order cannot be null")
-    @Future(message = "Time of order must be in the future")
-    private LocalDate timeOfOrder;
+
+    private LocalDate timeOfOrder = LocalDate.now();
 
     @NotBlank
     private String address;

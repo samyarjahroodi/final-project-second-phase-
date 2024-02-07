@@ -1,6 +1,6 @@
 package finalproject.finalproject.mapper;
 
-import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.payment.Card;
 import finalproject.finalproject.service.dto.request.CardDtoRequest;
 import finalproject.finalproject.service.dto.response.CardDtoResponse;
 import org.mapstruct.Mapper;

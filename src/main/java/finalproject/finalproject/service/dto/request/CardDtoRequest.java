@@ -16,7 +16,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 
 public class CardDtoRequest {
-    @NotNull
     @Size(min = 16, max = 16)
     String cardNumber;
 

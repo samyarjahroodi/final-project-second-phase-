@@ -2,8 +2,6 @@ package finalproject.finalproject.Entity.user;
 
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

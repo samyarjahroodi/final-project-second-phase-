@@ -1,17 +1,15 @@
 package finalproject.finalproject.controller;
 
-import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.payment.Card;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.mapper.CustomerMapper;
-import finalproject.finalproject.service.dto.request.CardDtoRequest;
-import finalproject.finalproject.service.dto.request.UserDtoChangePasswordRequest;
-import finalproject.finalproject.service.dto.request.UserDtoRequest;
-import finalproject.finalproject.service.dto.request.UserDtoRequestToLogin;
+import finalproject.finalproject.service.dto.request.*;
 import finalproject.finalproject.service.dto.response.UserDtoResponse;
 import finalproject.finalproject.service.dto.response.UserDtoResponseToChangePassword;
 import finalproject.finalproject.service.dto.response.UserDtoResponseToLogin;
 import finalproject.finalproject.service.impl.CardServiceImpl;
+import finalproject.finalproject.service.impl.CommentServiceImpl;
 import finalproject.finalproject.service.impl.CustomerOrderServiceImpl;
 import finalproject.finalproject.service.impl.CustomerServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +30,7 @@ public class CustomerController {
     private final ModelMapper modelMapper;
     private final CustomerOrderServiceImpl customerOrderService;
     private final CardServiceImpl cardService;
+    private final CommentServiceImpl commentService;
 
     @GetMapping("/find-By-Username-And-Password")
     public ResponseEntity<UserDtoResponseToLogin> findByUsernameAndPassword(@RequestBody UserDtoRequestToLogin dto) {
@@ -81,20 +80,25 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/pay-The-Price-Of-Customer-Order-By-Wallet/{customerOrderId}")
+    public ResponseEntity<String> payThePriceOfCustomerOrderByWallet(@PathVariable Integer customerOrderId) {
+        CustomerOrder customerOrderById = customerOrderService.getReferenceById(customerOrderId);
+        customerService.payThePriceOfCustomerOrderByWallet(customerOrderById);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/add-Comment-For-Customer-Id/{customerOrderId}")
+    public ResponseEntity<String> addCommentForCustomerId(@PathVariable Integer customerOrderId, @RequestBody CommentDtoRequest dto) {
+        CustomerOrder customerOrder = customerOrderService.getReferenceById(customerOrderId);
+        commentService.addCommentForCustomerId(customerOrder, dto);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     //todo : complete validation
     @PostMapping("/payment")
     public ResponseEntity<String> processPayment(@RequestBody CardDtoRequest dto) {
-        String cardNumber = dto.getCardNumber();
-        int cvv2 = dto.getCvv2();
-        int month = dto.getMonth();
-        int year = dto.getYear();
-        int password = dto.getPassword();
-        Card card = new Card();
-        card.setCardNumber(cardNumber);
-        card.setCvv2(cvv2);
-        card.setExpireDate(LocalDate.of(year, month, 1));
-        card.setPassword(password);
-        CustomerOrder customerOrder = customerOrderService.getReferenceById(2);
+        Card card = cardService.creatCard(dto);
+        CustomerOrder customerOrder = customerOrderService.getReferenceById(1);
         customerService.payThePriceOfCustomerOrderOnline(customerOrder, card);
         cardService.save(card);
         return new ResponseEntity<>(HttpStatus.OK);

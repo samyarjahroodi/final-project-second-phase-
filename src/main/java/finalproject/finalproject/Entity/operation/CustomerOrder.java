@@ -10,6 +10,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @SuperBuilder
@@ -54,5 +55,6 @@ public class CustomerOrder extends BaseEntity<Integer> {
     private List<Suggestion> suggestions;
 
     private LocalDate timeThatStatusChangedToFinished;
+
 
 }

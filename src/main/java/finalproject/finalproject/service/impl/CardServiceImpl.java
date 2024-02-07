@@ -1,7 +1,9 @@
 package finalproject.finalproject.service.impl;
 
-import finalproject.finalproject.Entity.Card;
-import finalproject.finalproject.Entity.user.Customer;
+import finalproject.finalproject.Entity.payment.Card;
+import finalproject.finalproject.exception.DuplicateException;
+import finalproject.finalproject.exception.NotValidSizeException;
+import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.CardRepository;
 import finalproject.finalproject.service.CardService;
 
@@ -14,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,17 +27,28 @@ public class CardServiceImpl
     private final CardRepository cardRepository;
     private final CustomerServiceImpl customerService;
 
-    public void creatCard(Customer customer, CardDtoRequest cardDtoRequest) {
-        Card card = new Card();
-        Card.builder()
-                .cardNumber(cardDtoRequest.getCardNumber())
-                .cvv2(cardDtoRequest.getCvv2())
-                .password(cardDtoRequest.getPassword())
-                .expireDate(LocalDate.of(cardDtoRequest.getYear(), cardDtoRequest.getMonth(), 00))
-                .build();
+    public Card creatCard(CardDtoRequest dto) {
+        if (dto.getCardNumber() == null){
+            throw new NullInputException("card number cannot be null");
+        }
+            Card card = new Card();
+        card.setCardNumber(dto.getCardNumber());
+        for (Card c : cardRepository.findAll()) {
+            if (c.getCardNumber().equals(card.getCardNumber())) {
+                throw new DuplicateException("card number already exists in database");
+            }
+        }
+        if (card.getCardNumber().length() != 16) {
+            throw new NotValidSizeException("card number should be 16");
+        }
+
+        card.setCvv2(dto.getCvv2());
+        card.setPassword(dto.getPassword());
+        int year = dto.getYear() + 1400;
+        LocalDate expireDate = LocalDate.of(year, dto.getMonth(), 1);
+        card.setExpireDate(expireDate);
         cardRepository.save(card);
-        customer.setCard(Collections.singletonList(card));
-        customerService.save(customer);
+        return card;
     }
 
     @Override

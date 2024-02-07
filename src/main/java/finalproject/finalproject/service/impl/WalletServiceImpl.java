@@ -1,6 +1,6 @@
 package finalproject.finalproject.service.impl;
 
-import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.WalletService;
 import lombok.RequiredArgsConstructor;

@@ -3,8 +3,6 @@ package finalproject.finalproject.Entity.operation;
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 

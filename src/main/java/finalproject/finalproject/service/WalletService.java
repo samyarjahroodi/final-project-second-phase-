@@ -1,6 +1,6 @@
 package finalproject.finalproject.service;
 
-import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.Entity.payment.Wallet;
 import org.springframework.stereotype.Service;
 
 @Service

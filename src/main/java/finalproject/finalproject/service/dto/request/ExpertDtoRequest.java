@@ -1,5 +1,6 @@
 package finalproject.finalproject.service.dto.request;
 
+import finalproject.finalproject.Entity.user.RegistrationStatus;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -23,6 +24,8 @@ public class ExpertDtoRequest {
     @UniqueElements
     @Email
     private String email;
+
+    private RegistrationStatus registrationStatus = RegistrationStatus.AWAITING_CONFIRMATION;
 
     @NotNull
     @UniqueElements

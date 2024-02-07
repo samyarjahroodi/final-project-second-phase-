@@ -2,6 +2,7 @@ package finalproject.finalproject.service.dto.request;
 
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -14,22 +15,22 @@ import org.hibernate.validator.constraints.UniqueElements;
 @NoArgsConstructor
 @Builder
 public class UserDtoRequest {
-    @NotNull
+    @NotBlank
     private String firstname;
 
-    @NotNull
+    @NotBlank
     private String lastname;
 
-    @NotNull
+    @NotBlank
     @UniqueElements
     @Email
     private String email;
 
-    @NotNull
+    @NotBlank
     @UniqueElements
     private String username;
 
-    @NotNull
+    @NotBlank
     @Pattern(regexp = "(?=^.{8,}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$")
     private String password;
 

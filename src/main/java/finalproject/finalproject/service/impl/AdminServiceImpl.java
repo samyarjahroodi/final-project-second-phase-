@@ -3,7 +3,8 @@ package finalproject.finalproject.service.impl;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
-import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.Entity.payment.Wallet;
+import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.exception.DuplicateException;
 import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
@@ -12,6 +13,7 @@ import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
+import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,11 +36,16 @@ public class AdminServiceImpl
     private final WalletServiceImpl walletService;
     private final ExpertServiceImpl expertService;
     private final SubDutyService subDutyService;
+    private final SearchPersonServiceImpl searchPersonService;
+
 
     @Override
     public Duty createDuty(DutyDtoRequest dto) {
         if (dto == null) {
             throw new NullInputException("dto cannot be null");
+        }
+        if (dto.getName() == null) {
+            throw new NullInputException("dto name cannot be null");
         }
         String dtoName = dto.getName();
         if (dutyService.findAll().stream().anyMatch(d -> d.getName().equals(dtoName))) {
@@ -52,8 +59,8 @@ public class AdminServiceImpl
 
     @Override
     public SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty) {
-        if (dto == null) {
-            throw new NullInputException("dto cannot be null");
+        if (dto == null || dto.getPrice() == null || dto.getDescription() == null || dto.getName() == null) {
+            throw new NullInputException("dto fields cannot be null");
         }
         Optional<Duty> dutyById = dutyService.findById(duty.getId());
         if (dutyById.isPresent()) {
@@ -89,7 +96,7 @@ public class AdminServiceImpl
 
     @Override
     public void updateDetailsForSubDuty(SubDutyDtoRequest dto, SubDuty subDuty) {
-        if (subDuty == null || dto == null) {
+        if (subDuty == null || dto == null || dto.getPrice() == null || dto.getDescription() == null || dto.getName() == null) {
             throw new NotFoundException("Sub duty or dto not found");
         }
         Optional<SubDuty> subDutyById = subDutyService.findById(subDuty.getId());
@@ -105,7 +112,9 @@ public class AdminServiceImpl
 
     @Override
     public void createExpert(ExpertDtoRequest dto) throws IOException {
-        if (dto == null) {
+
+        if (dto == null || dto.getEmail() == null || dto.getLastname() == null
+                || dto.getPassword()==null ||dto.getFirstname()==null||dto.getUsername()==null||dto.getPathName()==null) {
             throw new NullInputException("dto cannot be null");
         }
         Wallet wallet = Wallet.builder()
@@ -184,5 +193,10 @@ public class AdminServiceImpl
             throw new NullInputException("Expert object cannot be null");
         }
         expertService.updateRegistrationStatusForSpecificExpert(expert);
+    }
+
+    @Override
+    public List<Person> search(SearchForPerson search) {
+        return searchPersonService.search(search);
     }
 }

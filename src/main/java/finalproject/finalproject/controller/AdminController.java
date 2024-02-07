@@ -3,11 +3,13 @@ package finalproject.finalproject.controller;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.mapper.DutyMapper;
 import finalproject.finalproject.mapper.ExpertMapper;
 import finalproject.finalproject.mapper.SubDutyMapper;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
+import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import finalproject.finalproject.service.dto.response.DutyDtoResponse;
 import finalproject.finalproject.service.dto.response.ExpertDtoResponse;
@@ -127,6 +129,11 @@ public class AdminController {
         Expert expertById = expertService.getReferenceById(expertId);
         adminService.changeTheStatusOfExpert(expertById);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public List<Person> search(@RequestBody SearchForPerson search) {
+        return adminService.search(search);
     }
 
 

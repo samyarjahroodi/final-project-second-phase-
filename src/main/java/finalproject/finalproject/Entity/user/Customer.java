@@ -1,8 +1,8 @@
 package finalproject.finalproject.Entity.user;
 
-import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.payment.Card;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
-import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.Entity.payment.Wallet;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;

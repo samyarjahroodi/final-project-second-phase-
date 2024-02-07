@@ -1,13 +1,13 @@
 package finalproject.finalproject.service.impl;
 
 
-import finalproject.finalproject.Entity.Card;
+import finalproject.finalproject.Entity.payment.Card;
 import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
-import finalproject.finalproject.Entity.Wallet;
+import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.CustomerRepository;
@@ -159,32 +159,24 @@ public class CustomerServiceImpl
         if (customerOrder == null || card == null) {
             throw new NullInputException("customer Order and card cannot be null");
         }
-        Suggestion suggestionThatIsApproved = customerOrderService.findSuggestionThatIsApproved(customerOrder);
-        if (card.getMoney() > suggestionThatIsApproved.getSuggestedPrice()) {
-            int suggestedPrice = suggestionThatIsApproved.getSuggestedPrice();
-            Expert approvedExpert = findApprovedExpert(customerOrder);
-            card.setMoney(card.getMoney() - suggestionThatIsApproved.getSuggestedPrice());
-            double creditOfWallet = approvedExpert.getWallet().getCreditOfWallet();
-            approvedExpert.getWallet().setCreditOfWallet(creditOfWallet + 0.7 * suggestedPrice);
-            customerOrder.setStatus(Status.BEEN_PAID);
-            customerOrderService.save(customerOrder);
-            expertService.save(approvedExpert);
+        if (customerOrder.getStatus().equals(Status.FINISHED)) {
+            Suggestion suggestionThatIsApproved = customerOrderService.findSuggestionThatIsApproved(customerOrder);
+            if (card.getMoney() > suggestionThatIsApproved.getSuggestedPrice()) {
+                int suggestedPrice = suggestionThatIsApproved.getSuggestedPrice();
+                Expert approvedExpert = findApprovedExpert(customerOrder);
+                card.setMoney(card.getMoney() - suggestionThatIsApproved.getSuggestedPrice());
+                double creditOfWallet = approvedExpert.getWallet().getCreditOfWallet();
+                approvedExpert.getWallet().setCreditOfWallet(creditOfWallet + 0.7 * suggestedPrice);
+                customerOrder.setStatus(Status.BEEN_PAID);
+                customerOrderService.save(customerOrder);
+                expertService.save(approvedExpert);
+            }
+        } else {
+            throw new StatusException("customer order status should be finished");
         }
     }
 
-    @Override
-    public Comment submitComment(CustomerOrder customerOrder, CommentDtoRequest commentDtoRequest) {
-        if (customerOrder == null || commentDtoRequest == null) {
-            throw new NullInputException("customer order or comment dto could not be null");
-        }
-        Comment comment = Comment.builder()
-                .comment(commentDtoRequest.getComment())
-                .star(commentDtoRequest.getStar())
-                .customerOrder(customerOrder)
-                .build();
-        commentService.save(comment);
-        return comment;
-    }
+
 
     public Expert findApprovedExpert(CustomerOrder customerOrder) {
         return customerOrder.getSuggestions().stream()

@@ -1,4 +1,4 @@
-package finalproject.finalproject.Entity;
+package finalproject.finalproject.Entity.payment;
 
 import finalproject.finalproject.Entity.baseEntity.BaseEntity;
 import finalproject.finalproject.Entity.user.Customer;
@@ -9,6 +9,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDate;
 

@@ -4,14 +4,19 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
+import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 
-public interface AdminService   {
+@Service
+
+public interface AdminService {
     Duty createDuty(DutyDtoRequest dto);
 
     SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty);
@@ -37,4 +42,6 @@ public interface AdminService   {
     void addSubDutyToNewExpert(Expert expert, SubDuty subDuty);
 
     void changeTheStatusOfExpert(Expert expert);
+
+    List<Person> search(SearchForPerson search);
 }
