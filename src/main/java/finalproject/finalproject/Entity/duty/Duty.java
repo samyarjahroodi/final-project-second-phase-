@@ -20,7 +20,6 @@ import java.util.List;
 @Entity
 @ToString
 public class Duty extends BaseEntity<Integer> {
-    @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "duty", fetch = FetchType.EAGER)

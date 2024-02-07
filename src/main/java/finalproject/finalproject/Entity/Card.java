@@ -22,16 +22,10 @@ import java.time.LocalDate;
 @ToString
 public class Card extends BaseEntity<Integer> {
 
-    @NotNull
-    @Size(min = 16, max = 16)
     String cardNumber;
 
-    @Min(100)
-    @Max(9999)
     int cvv2;
 
-    @Min(1000)
-    @Max(9999)
     int password;
 
     int money = 50;

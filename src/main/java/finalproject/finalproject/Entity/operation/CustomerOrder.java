@@ -20,6 +20,7 @@ import java.util.List;
 @Entity
 @Table(name = "customer_order")
 public class CustomerOrder extends BaseEntity<Integer> {
+
     private String description;
 
     private double price;

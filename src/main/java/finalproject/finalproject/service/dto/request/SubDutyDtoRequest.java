@@ -1,5 +1,6 @@
 package finalproject.finalproject.service.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -8,15 +9,13 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class SubDutyDtoRequest {
-
+    @NotNull
     private String name;
 
+    @NotNull
     private String description;
 
     private Integer price;
 
-   /* private Duty duty;
-
-    private List<Expert> experts;*/
 
 }

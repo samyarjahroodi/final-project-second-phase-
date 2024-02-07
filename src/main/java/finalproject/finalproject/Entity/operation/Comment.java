@@ -6,9 +6,10 @@ import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -17,8 +18,6 @@ import lombok.*;
 public class Comment extends BaseEntity<Integer> {
     private String comment;
 
-    @Max(5)
-    @Min(0)
     private Double star;
 
     @OneToOne

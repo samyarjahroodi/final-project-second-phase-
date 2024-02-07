@@ -19,16 +19,16 @@ import java.time.LocalDate;
 @Entity
 @ToString
 public class Suggestion extends BaseEntity<Integer> {
-    @Column(name = "suggested_price", nullable = false)
+    @Column(name = "suggested_price")
     private int suggestedPrice;
 
-    @Column(name = "when_suggestion_created", nullable = false)
+    @Column(name = "when_suggestion_created")
     private LocalDate whenSuggestionCreated;
 
-    @Column(name = "suuggested_time_to_start_the_project", nullable = false)
+    @Column(name = "suuggested_time_to_start_the_project")
     private LocalDate suggestedTimeToStartTheProject;
 
-    @Column(name = "days_that_taken", nullable = false)
+    @Column(name = "days_that_taken")
     private int daysThatTaken;
 
     @ManyToOne

@@ -17,13 +17,10 @@ import java.util.List;
 @Entity
 //@ToString
 public class SubDuty extends BaseEntity<Integer> {
-    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
     private double price;
 
     @ManyToOne
