@@ -6,6 +6,7 @@ import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.Entity.user.RegistrationStatus;
 import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.SuggestionRepository;
 import finalproject.finalproject.service.SuggestionService;
@@ -14,11 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.stereotype.Service;
 
 
-import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +33,10 @@ public class SuggestionServiceImpl
     private final CustomerOrderServiceImpl customerOrderService;
 
     @Override
-    public void createSuggestionForExpert(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) throws Exception {
+    public void createSuggestionForExpert(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) {
+        if (!expert.getRegistrationStatus().equals(RegistrationStatus.ACCEPTED)) {
+            throw new StatusException("your status must be accepted");
+        }
         if (isThereAnyApproveSuggestion(customerOrder)) {
             throw new StatusException("This suggestion has already been approved");
         }
@@ -46,7 +49,7 @@ public class SuggestionServiceImpl
             Suggestion suggestion = Suggestion.builder()
                     .suggestedPrice(dto.getSuggestedPrice())
                     .whenSuggestionCreated(dto.getWhenSuggestionCreated())
-                    .daysThatTaken(dto.getDaysThatTaken())
+                    .hoursThatTaken(dto.getHoursThatTaken())
                     .suggestedTimeToStartTheProject(dto.getSuggestedTimeToStartTheProject())
                     .order(customerOrder)
                     .expert(expert)
@@ -54,7 +57,7 @@ public class SuggestionServiceImpl
             if (suggestion.getSuggestedPrice() < customerOrder.getSubDuty().getPrice()) {
                 throw new PriceException("your price is less than the expected price for this service");
             }
-            if (suggestion.getSuggestedTimeToStartTheProject().isBefore(LocalDate.now())) {
+            if (suggestion.getSuggestedTimeToStartTheProject().isBefore(ZonedDateTime.now())) {
                 throw new TimeException("your time to start the project is before now");
             }
             customerOrder.setStatus(WAITING_EXPERT_SELECTION);

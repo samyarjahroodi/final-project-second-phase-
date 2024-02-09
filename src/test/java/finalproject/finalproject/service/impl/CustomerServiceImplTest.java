@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +66,7 @@ class CustomerServiceImplTest extends BaseTest {
         CustomerOrder customerOrder =
                 createCustomerOrder(1900, LocalDate.now(), Status.WAITING_EXPERT_SELECTION, LocalDate.of(2024, 10, 9), 1000, duty, subDuty);
         LocalDate localDate = LocalDate.of(2024, 02, 9);
-        customerService.changeStatusOfCustomerOrderToFinished(customerOrder,localDate );
+        customerService.changeStatusOfCustomerOrderToFinished(customerOrder, ZonedDateTime.from(localDate));
         Assertions.assertEquals(Status.FINISHED, customerOrder.getStatus());
     }
 
@@ -73,7 +74,7 @@ class CustomerServiceImplTest extends BaseTest {
     void changeStatusOfCustomerOrderToFinishedWhenCustomerIsNull() {
         LocalDate localDate = LocalDate.of(2024, 02, 9);
         IllegalArgumentException illegalArgumentException =
-                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusOfCustomerOrderToFinished(null,localDate));
+                Assertions.assertThrows(IllegalArgumentException.class, () -> customerService.changeStatusOfCustomerOrderToFinished(null, ZonedDateTime.from(localDate)));
         Assertions.assertEquals("customerOrder cannot be null", illegalArgumentException.getMessage());
     }
 

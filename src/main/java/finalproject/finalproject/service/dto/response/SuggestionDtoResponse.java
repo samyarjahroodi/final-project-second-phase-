@@ -3,6 +3,7 @@ package finalproject.finalproject.service.dto.response;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -15,14 +16,9 @@ public class SuggestionDtoResponse {
 
     private LocalDate whenSuggestionCreated;
 
-    private LocalDate suggestedTimeToStartTheProject;
+    private ZonedDateTime suggestedTimeToStartTheProject;
 
-    private int daysThatTaken;
+    private int hoursThatTaken;
 
-    /*private CustomerOrder order;*/
-
-   /* private Boolean isApproved;*/
-
-   /* private Expert expert;*/
 
 }

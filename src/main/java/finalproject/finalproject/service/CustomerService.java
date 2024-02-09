@@ -10,6 +10,7 @@ import finalproject.finalproject.service.dto.request.UserDtoRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @Service
 public interface CustomerService extends BaseService<Customer, Integer> {
@@ -20,7 +21,7 @@ public interface CustomerService extends BaseService<Customer, Integer> {
 
     void changeStatusToStarted(CustomerOrder customerOrder, Suggestion suggestion, LocalDate timeToStartTheProject);
 
-    void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, LocalDate localDate);
+    void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, ZonedDateTime zonedDateTime);
 
     Customer createCustomer(UserDtoRequest dto);
 

@@ -38,6 +38,11 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("lastname"), search.getLastname()));
             }
 
+            if (search.getRole() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), search.getRole()));
+            }
+
+
             if (search.getEmail() != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("email"), search.getEmail()));
             }
@@ -45,6 +50,16 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
             if (search.getUsername() != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("username"), search.getUsername()));
             }
+
+            if (search.getStar() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("star"), search.getStar()));
+            }
+
+            if (search.getSubDuty() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("subDuty"), search.getSubDuty()));
+            }
+
+            query.orderBy(criteriaBuilder.desc(root.get("star")));
 
             return predicate;
         };

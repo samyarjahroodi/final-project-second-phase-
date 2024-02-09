@@ -34,8 +34,6 @@ public class Expert extends Person {
     @JsonIgnore
     private byte[] image;
 
-    @Max(5)
-    @Min(0)
     private Double star;
 
     @OneToMany(mappedBy = "expert")

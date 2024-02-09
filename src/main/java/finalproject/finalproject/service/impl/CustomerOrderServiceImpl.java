@@ -6,6 +6,7 @@ import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
+import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.exception.NullInputException;
@@ -76,26 +77,27 @@ public class CustomerOrderServiceImpl
     @Transactional
     public void reduceStarsOfExpertIfNeeded(CustomerOrder customerOrder) {
         Suggestion suggestion = findSuggestionThatIsApproved(customerOrder);
-        Expert approvedExpert = customerService.findApprovedExpert(customerOrder);
-
-        ZonedDateTime suggestedTime = ZonedDateTime.from(suggestion.getSuggestedTimeToStartTheProject().atStartOfDay().plusDays(suggestion.getDaysThatTaken()));
-        ZonedDateTime timeThatStatusChangedToFinished = ZonedDateTime.from(customerOrder.getTimeThatStatusChangedToFinished().atStartOfDay());
-
-        if (timeThatStatusChangedToFinished.isAfter(suggestedTime)) {
-            long hoursDifference = Duration.between(suggestedTime, timeThatStatusChangedToFinished).toHours();
+        Expert expert = suggestion.getExpert();
+        ZonedDateTime suggestedTimeToStartTheProject = suggestion.getSuggestedTimeToStartTheProject();
+        ZonedDateTime timeThatStatusChangedToFinished = customerOrder.getTimeThatStatusChangedToFinished();
+        int hour = timeThatStatusChangedToFinished.getHour();
+        int hour1 = suggestedTimeToStartTheProject.getHour();
+        if (hour - hour1 > suggestion.getHoursThatTaken()) {
+            int hoursDifference = hour - hour1;
             for (int i = 0; i < hoursDifference; i++) {
-                double star = approvedExpert.getStar();
-                approvedExpert.setStar(star - i);
-                expertService.save(approvedExpert);
-                if (hoursDifference > star) {
-                    approvedExpert.getWallet().setActive(false);
-                    expertService.save(approvedExpert);
+                double star = expert.getStar().intValue();
+                if (star < 0) {
+                    Wallet wallet = expert.getWallet();
+                    wallet.setActive(false);
+                    walletService.save(wallet);
+                    expertService.save(expert);
                     break;
                 }
+                expert.setStar(star - i);
+                expertService.save(expert);
             }
         }
     }
-
 
 
     public Suggestion findSuggestionThatIsApproved(CustomerOrder customerOrder) {
@@ -194,7 +196,7 @@ public class CustomerOrderServiceImpl
 
     @Override
     public CustomerOrder getReferenceById(Integer integer) {
-        return customerOrderRepository.getReferenceById(integer);
+        return customerOrderRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 
 

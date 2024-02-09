@@ -8,6 +8,7 @@ import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
+import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.repository.*;
 import finalproject.finalproject.service.dto.request.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 @DataJpaTest
@@ -76,6 +78,7 @@ public class BaseTest {
                 .password(expertDto.getPassword())
                 .username(expertDto.getUsername())
                 .image(expertService.setImageForExpert(imagePath))
+                .role(Role.EXPERT)
                 .build();
         expert.setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
         expert.setWhenExpertRegistered(LocalDate.now());
@@ -127,12 +130,12 @@ public class BaseTest {
     }
 
 
-    protected SuggestionDtoRequest createSuggestionDto(int suggestionPrice, LocalDate whenSuggestionCreated, LocalDate suggestedTimeToStartTheProject, int daysThatTaken) {
+    protected SuggestionDtoRequest createSuggestionDto(int suggestionPrice, LocalDate whenSuggestionCreated, LocalDate suggestedTimeToStartTheProject, int hoursThatTaken) {
         return SuggestionDtoRequest.builder()
                 .suggestedPrice(suggestionPrice)
                 .whenSuggestionCreated(whenSuggestionCreated)
-                .suggestedTimeToStartTheProject(suggestedTimeToStartTheProject)
-                .daysThatTaken(daysThatTaken)
+                .suggestedTimeToStartTheProject(ZonedDateTime.from(suggestedTimeToStartTheProject))
+                .hoursThatTaken(hoursThatTaken)
                 .build();
     }
 
@@ -144,7 +147,7 @@ public class BaseTest {
                 .suggestedPrice(dto.getSuggestedPrice())
                 .whenSuggestionCreated(dto.getWhenSuggestionCreated())
                 .suggestedTimeToStartTheProject(dto.getSuggestedTimeToStartTheProject())
-                .daysThatTaken(dto.getDaysThatTaken())
+                .hoursThatTaken(dto.getHoursThatTaken())
                 /*  .order(dto)*/
                 .build();
         suggestionRepository.save(suggestion);

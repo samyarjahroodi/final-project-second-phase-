@@ -9,6 +9,7 @@ import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,12 +81,13 @@ public class CustomerServiceImpl
 
     //local date should be now but for testing we need to get local date from customer
     @Override
-    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, LocalDate localDate) {
+    public void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, ZonedDateTime zonedDateTime) {
         if (customerOrder == null) {
             throw new NullInputException("customerOrder cannot be null");
         }
         customerOrder.setStatus(Status.FINISHED);
-        customerOrder.setTimeThatStatusChangedToFinished(localDate);
+        customerOrder.setTimeThatStatusChangedToFinished(zonedDateTime);
+        customerOrderService.save(customerOrder);
     }
 
     public Customer createCustomer(UserDtoRequest dto) {
@@ -97,6 +101,7 @@ public class CustomerServiceImpl
                 .password(dto.getPassword())
                 .username(dto.getUsername())
                 .wallet(walletService.save(Wallet.builder().creditOfWallet(0).build()))
+                .role(Role.CUSTOMER)
                 .build();
 
         return repository.save(customer);
@@ -124,6 +129,10 @@ public class CustomerServiceImpl
         if (customerOrder == null) {
             throw new NullInputException("customer Order cannot be null");
         }
+/*        Customer customer1 = customerOrder.getCustomer();
+        customerOrder.setCustomer(customer1);
+        customerOrderService.save(customerOrder);*/
+
         if (customerOrder.getStatus() == Status.FINISHED) {
             double priceOfTheCustomerOrder = customerOrder.getPrice();
             Customer customer = customerOrder.getCustomer();
@@ -140,7 +149,9 @@ public class CustomerServiceImpl
 
                     customerWallet.setCreditOfWallet(customerCredit - priceOfTheCustomerOrder);
                     expertWallet.setCreditOfWallet(expertWallet.getCreditOfWallet() + expertShare);
+                    walletService.save(expertWallet);
                     customerOrder.setStatus(Status.BEEN_PAID);
+                    walletService.save(customerWallet);
                     customerOrderService.save(customerOrder);
                 } else {
                     throw new NotEnoughCreditException("Customer does not have enough credit to pay");
@@ -177,13 +188,13 @@ public class CustomerServiceImpl
     }
 
 
-
     public Expert findApprovedExpert(CustomerOrder customerOrder) {
-        return customerOrder.getSuggestions().stream()
+  /*      return customerOrder.getSuggestions().stream()
                 .filter(Suggestion::getIsApproved)
                 .map(Suggestion::getExpert)
                 .findFirst()
-                .orElse(null);
+                .orElse(null);*/
+        return customerOrder.getSuggestions().get(0).getExpert();
     }
 
     public Customer save(Customer customer) {

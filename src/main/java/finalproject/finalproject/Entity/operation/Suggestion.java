@@ -10,6 +10,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @SuperBuilder
 @AllArgsConstructor
@@ -26,10 +27,10 @@ public class Suggestion extends BaseEntity<Integer> {
     private LocalDate whenSuggestionCreated;
 
     @Column(name = "suuggested_time_to_start_the_project")
-    private LocalDate suggestedTimeToStartTheProject;
+    private ZonedDateTime suggestedTimeToStartTheProject;
 
-    @Column(name = "days_that_taken")
-    private int daysThatTaken;
+    @Column(name = "hours_that_taken")
+    private int hoursThatTaken;
 
     @ManyToOne
     private CustomerOrder order;

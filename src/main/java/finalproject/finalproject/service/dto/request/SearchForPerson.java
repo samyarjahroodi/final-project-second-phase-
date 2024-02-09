@@ -1,5 +1,6 @@
 package finalproject.finalproject.service.dto.request;
 
+import finalproject.finalproject.Entity.user.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,5 +18,11 @@ public class SearchForPerson {
     String email;
 
     String username;
+
+    Integer star;
+
+    String subDuty;
+
+    Role role;
 
 }

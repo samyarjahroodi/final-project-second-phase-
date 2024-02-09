@@ -13,6 +13,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -25,7 +26,6 @@ public class CustomerOrderDtoRequest {
 
     @PositiveOrZero
     private double price;
-
 
     private LocalDate timeOfOrder = LocalDate.now();
 
@@ -41,5 +41,7 @@ public class CustomerOrderDtoRequest {
     private Duty duty;
 
     private SubDuty subDuty;
+
+    private ZonedDateTime timeThatStatusChangedToFinished;
 
 }

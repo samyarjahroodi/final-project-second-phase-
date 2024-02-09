@@ -29,4 +29,7 @@ public class Person extends BaseEntity<Integer> {
 
     private String username;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 }

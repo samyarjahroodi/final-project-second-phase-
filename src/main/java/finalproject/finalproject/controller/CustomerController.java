@@ -1,6 +1,5 @@
 package finalproject.finalproject.controller;
 
-import finalproject.finalproject.Entity.payment.Card;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.mapper.CustomerMapper;
@@ -8,17 +7,15 @@ import finalproject.finalproject.service.dto.request.*;
 import finalproject.finalproject.service.dto.response.UserDtoResponse;
 import finalproject.finalproject.service.dto.response.UserDtoResponseToChangePassword;
 import finalproject.finalproject.service.dto.response.UserDtoResponseToLogin;
-import finalproject.finalproject.service.impl.CardServiceImpl;
-import finalproject.finalproject.service.impl.CommentServiceImpl;
-import finalproject.finalproject.service.impl.CustomerOrderServiceImpl;
-import finalproject.finalproject.service.impl.CustomerServiceImpl;
+import finalproject.finalproject.service.impl.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 
 @RestController
@@ -31,6 +28,7 @@ public class CustomerController {
     private final CustomerOrderServiceImpl customerOrderService;
     private final CardServiceImpl cardService;
     private final CommentServiceImpl commentService;
+    private final RealCaptchaServiceImpl captchaService;
 
     @GetMapping("/find-By-Username-And-Password")
     public ResponseEntity<UserDtoResponseToLogin> findByUsernameAndPassword(@RequestBody UserDtoRequestToLogin dto) {
@@ -48,7 +46,6 @@ public class CustomerController {
         return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
     }
 
-    //todo implement comlete response (password is null)!!!!
     @PutMapping("/change-Password")
     public ResponseEntity<UserDtoResponseToChangePassword> changePassword(@RequestBody UserDtoChangePasswordRequest dto) {
         Customer customer = CustomerMapper.INSTANCE.requestDtoToModelToChangePassword(dto);
@@ -64,7 +61,6 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //todo
     @PutMapping("/change-Status-To-Started/{customerOrderId}")
     public ResponseEntity<String> changeStatusToStarted(@PathVariable Integer customerOrderId) {
         CustomerOrder customerOrderById = customerOrderService.getReferenceById(customerOrderId);
@@ -75,13 +71,13 @@ public class CustomerController {
     @PutMapping("/change-Status-Of-Customer-Order-To-Finished/{customerOrderId}")
     public ResponseEntity<String> changeStatusOfCustomerOrderToFinished(@PathVariable Integer customerOrderId) {
         CustomerOrder customerOrderById = customerOrderService.getReferenceById(customerOrderId);
-        LocalDate localDate = LocalDate.of(2024, 02, 9);
-        customerService.changeStatusOfCustomerOrderToFinished(customerOrderById, localDate);
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(2024, 2, 14, 0, 0, 0, 0, ZoneId.systemDefault());
+        customerService.changeStatusOfCustomerOrderToFinished(customerOrderById, zonedDateTime);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/pay-The-Price-Of-Customer-Order-By-Wallet/{customerOrderId}")
-    public ResponseEntity<String> payThePriceOfCustomerOrderByWallet(@PathVariable Integer customerOrderId) {
+    @PutMapping("/pay-The-Price-Of-Customer-Order-By-Wallet")
+    public ResponseEntity<String> payThePriceOfCustomerOrderByWallet(@RequestParam Integer customerOrderId) {
         CustomerOrder customerOrderById = customerOrderService.getReferenceById(customerOrderId);
         customerService.payThePriceOfCustomerOrderByWallet(customerOrderById);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -94,13 +90,8 @@ public class CustomerController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    //todo : complete validation
     @PostMapping("/payment")
     public ResponseEntity<String> processPayment(@RequestBody CardDtoRequest dto) {
-        Card card = cardService.creatCard(dto);
-        CustomerOrder customerOrder = customerOrderService.getReferenceById(1);
-        customerService.payThePriceOfCustomerOrderOnline(customerOrder, card);
-        cardService.save(card);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
