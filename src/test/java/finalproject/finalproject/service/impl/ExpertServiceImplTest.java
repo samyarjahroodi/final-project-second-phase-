@@ -1,7 +1,14 @@
 package finalproject.finalproject.service.impl;
 
+import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.operation.Status;
+import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.service.dto.request.CommentDtoRequest;
+import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
+import finalproject.finalproject.service.dto.request.SuggestionDtoRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +38,7 @@ class ExpertServiceImplTest extends BaseTest {
     void showExpertForTest() throws IOException {
         Expert expert = createExpert();
         int size = expertService.showExpert().size();
-        assertEquals(1,size);
+        assertEquals(1, size);
     }
 
     @Test
@@ -40,6 +49,7 @@ class ExpertServiceImplTest extends BaseTest {
 
         assertNotNull(imageData);
     }
+
     @Test
     void deleteSubDutyOFTheSpecificExpert() throws IOException {
         Expert expert = createExpert();
@@ -93,5 +103,22 @@ class ExpertServiceImplTest extends BaseTest {
         expertService.saveImageToFolder(imageData, folderPath, fileName);
         Path imagePath = Paths.get(folderPath, fileName + ".jpg");
         assertTrue(Files.exists(imagePath), "Image file not created in the specified folder");
+    }
+
+    @Test
+    void averageStar() throws IOException {
+        Expert expert = createExpert();
+        SubDuty subDuty = createSubDuty(100);
+        Duty duty = createDuty();
+        adminService.addSubDutyToDutyByAdmin(duty, Collections.singletonList(subDuty));
+        CustomerOrder customerOrder = createCustomerOrder(150, LocalDate.now(), Status.STARTED,
+                LocalDate.of(2024, 02, 12), subDuty.getPrice(), duty, subDuty);
+        Suggestion suggestion = createSuggestion(120,  LocalDate.of(2024,02,12));
+        SuggestionDtoRequest suggestionDto =
+                createSuggestionDto(120, LocalDate.now(), LocalDate.of(2024, 02, 12), 2);
+        suggestionService.createSuggestionForExpert(expert,suggestionDto,customerOrder);
+        commentService.addCommentForCustomerId(customerOrder, createCommentDtoRequest());
+        expertService.averageStarOfExpert(expert);
+        assertEquals(3.4,expert.getStar());
     }
 }

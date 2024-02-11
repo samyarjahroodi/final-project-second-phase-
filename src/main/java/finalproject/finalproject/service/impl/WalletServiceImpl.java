@@ -1,6 +1,7 @@
 package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.payment.Wallet;
+import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.WalletService;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,6 @@ public class WalletServiceImpl
 
     @Override
     public Wallet getReferenceById(Integer integer) {
-        return walletRepository.getOne(integer);
+        return walletRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }

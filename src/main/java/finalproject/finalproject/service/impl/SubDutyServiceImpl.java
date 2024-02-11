@@ -84,6 +84,6 @@ public class SubDutyServiceImpl
 
     @Override
     public SubDuty getReferenceById(Integer integer) {
-        return subDutyRepository.getOne(integer);
+        return subDutyRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }

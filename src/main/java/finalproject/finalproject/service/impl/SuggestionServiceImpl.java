@@ -142,6 +142,6 @@ public class SuggestionServiceImpl
 
     @Override
     public Suggestion getReferenceById(Integer integer) {
-        return suggestionRepository.getOne(integer);
+        return suggestionRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }

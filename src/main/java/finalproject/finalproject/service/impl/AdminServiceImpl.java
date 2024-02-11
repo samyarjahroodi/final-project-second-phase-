@@ -5,6 +5,7 @@ import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Person;
+import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.DuplicateException;
 import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
@@ -15,6 +16,7 @@ import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
+import finalproject.finalproject.service.validation.ValidateExpertDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -112,11 +114,7 @@ public class AdminServiceImpl
 
     @Override
     public void createExpert(ExpertDtoRequest dto) throws IOException {
-
-        if (dto == null || dto.getEmail() == null || dto.getLastname() == null
-                || dto.getPassword()==null ||dto.getFirstname()==null||dto.getUsername()==null||dto.getPathName()==null) {
-            throw new NullInputException("dto cannot be null");
-        }
+        ValidateExpertDto.validateExpertDtoRequest(dto);
         Wallet wallet = Wallet.builder()
                 .creditOfWallet(0)
                 .build();
@@ -129,9 +127,11 @@ public class AdminServiceImpl
                 .password(dto.getPassword())
                 .username(dto.getUsername())
                 .wallet(wallet)
+                .role(Role.EXPERT)
                 .registrationStatus(AWAITING_CONFIRMATION)
                 .whenExpertRegistered(LocalDate.now())
                 .image(expertService.setImageForExpert(dto.getPathName()))
+                .fieldOfEndeavor(dto.getFieldOfEndeavor())
                 .build();
 
         expertService.save(expert);

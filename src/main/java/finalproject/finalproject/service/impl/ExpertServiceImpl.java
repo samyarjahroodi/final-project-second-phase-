@@ -2,6 +2,7 @@ package finalproject.finalproject.service.impl;
 
 
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
 import finalproject.finalproject.exception.NotValidFormatFileException;
@@ -29,7 +30,7 @@ import java.util.Optional;
 
 @Service
 @Primary
-@Transactional(readOnly = true)
+@Transactional
 public class ExpertServiceImpl
         extends PersonServiceImpl<Expert, ExpertRepository>
         implements ExpertService {
@@ -43,6 +44,13 @@ public class ExpertServiceImpl
         this.subDutyService = subDutyService;
     }
 
+
+    @Override
+    public void averageStarOfExpert(Expert expert) {
+        double star = repository.averageStarOfExpert(expert);
+        expert.setStar(star);
+        repository.save(expert);
+    }
 
     @Override
     public void updateRegistrationStatusForSpecificExpert(Expert expert) {
@@ -82,14 +90,16 @@ public class ExpertServiceImpl
         if (pathname == null) {
             throw new NullInputException("Pathname cannot be null");
         }
-        if (!pathname.toLowerCase().endsWith(".jpg")) {
-            throw new NotValidFormatFileException("Only JPG images are allowed");
-        }
         byte[] imageData = Files.readAllBytes(Paths.get(pathname));
         if (imageData.length > 300 * 1024) {
             throw new NotValidSizeException("Image size exceeds the limit of 300 KB");
         }
         return imageData;
+    }
+
+    @Override
+    public double seeStarOfOrder(CustomerOrder customerOrder) {
+        return repository.seeStarOfOrder(customerOrder);
     }
 
 
@@ -145,7 +155,7 @@ public class ExpertServiceImpl
 
     @Override
     public Expert getReferenceById(Integer integer) {
-        return repository.getReferenceById(integer);
+        return repository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }
 

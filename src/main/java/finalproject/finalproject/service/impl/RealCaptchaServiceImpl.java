@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class RealCaptchaServiceImpl implements RealCaptchaService {
+    @Autowired
     private final HttpSession httpSession;
 
     @Autowired

@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.payment.Wallet;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -41,5 +39,7 @@ public class Expert extends Person {
 
     @OneToOne
     private Wallet wallet;
+
+    private String fieldOfEndeavor;
 
 }

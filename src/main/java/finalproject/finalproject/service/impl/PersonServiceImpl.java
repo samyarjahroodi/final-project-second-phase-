@@ -55,9 +55,10 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("star"), search.getStar()));
             }
 
-            if (search.getSubDuty() != null) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("subDuty"), search.getSubDuty()));
+            if (search.getFieldOfEndeavor() != null) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("fieldOfEndeavor"), search.getFieldOfEndeavor()));
             }
+
 
             query.orderBy(criteriaBuilder.desc(root.get("star")));
 

@@ -1,6 +1,7 @@
 package finalproject.finalproject.controller;
 
 import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.mapper.CustomerMapper;
 import finalproject.finalproject.service.dto.request.*;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -28,6 +30,7 @@ public class CustomerController {
     private final CustomerOrderServiceImpl customerOrderService;
     private final CardServiceImpl cardService;
     private final CommentServiceImpl commentService;
+    private final SuggestionServiceImpl suggestionService;
     private final RealCaptchaServiceImpl captchaService;
 
     @GetMapping("/find-By-Username-And-Password")
@@ -94,5 +97,15 @@ public class CustomerController {
     public ResponseEntity<String> processPayment(@RequestBody CardDtoRequest dto) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PutMapping("/change-status-to-started/{customerOrderId}/{suggestionId}")
+    public ResponseEntity<String> changeStatusToStarted(@PathVariable Integer customerOrderId,
+                                                        @PathVariable Integer suggestionId) {
+        CustomerOrder customerById = customerOrderService.getReferenceById(customerOrderId);
+        Suggestion suggestionById = suggestionService.getReferenceById(suggestionId);
+        customerService.changeStatusToStarted(customerById, suggestionById, LocalDate.now());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
 

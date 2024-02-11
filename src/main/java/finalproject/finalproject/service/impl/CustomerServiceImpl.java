@@ -16,6 +16,7 @@ import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
 import finalproject.finalproject.service.dto.request.CommentDtoRequest;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,9 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static finalproject.finalproject.service.validation.ValidateUserDto.validateUserDtoRequest;
 
 
 @Service
@@ -50,7 +52,6 @@ public class CustomerServiceImpl
         this.commentService = commentService;
     }
 
-    //this method is for checking login
     @Override
     public Customer findByUsernameAndPassword(String username, String password) {
         //This method is for login for different user types
@@ -59,6 +60,7 @@ public class CustomerServiceImpl
         }
         return repository.findByUsernameAndPassword(username, password);
     }
+
 
     @Override
     public void changeStatusOfCustomerOrderToWaitingForTheExpertToComeToYourPlace(CustomerOrder customerOrder) {
@@ -91,9 +93,7 @@ public class CustomerServiceImpl
     }
 
     public Customer createCustomer(UserDtoRequest dto) {
-        if (dto == null) {
-            throw new NullInputException("dto cannot be null");
-        }
+        validateUserDtoRequest(dto);
         Customer customer = Customer.builder()
                 .firstname(dto.getFirstname())
                 .lastname(dto.getLastname())
@@ -129,10 +129,6 @@ public class CustomerServiceImpl
         if (customerOrder == null) {
             throw new NullInputException("customer Order cannot be null");
         }
-/*        Customer customer1 = customerOrder.getCustomer();
-        customerOrder.setCustomer(customer1);
-        customerOrderService.save(customerOrder);*/
-
         if (customerOrder.getStatus() == Status.FINISHED) {
             double priceOfTheCustomerOrder = customerOrder.getPrice();
             Customer customer = customerOrder.getCustomer();
@@ -248,6 +244,6 @@ public class CustomerServiceImpl
 
     @Override
     public Customer getReferenceById(Integer integer) {
-        return repository.getReferenceById(integer);
+        return repository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }

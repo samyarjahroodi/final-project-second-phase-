@@ -31,6 +31,9 @@ public class BaseTest {
     protected DutyRepository dutyRepository;
 
     @Autowired
+    protected CommentServiceImpl commentService;
+
+    @Autowired
     protected DutyServiceImpl dutyService;
 
     @Autowired
@@ -161,6 +164,13 @@ public class BaseTest {
                 .email("john.doe@example.com")
                 .username("john_doe")
                 .password("my_password@domain.com")
+                .build();
+    }
+
+    protected CommentDtoRequest createCommentDtoRequest() {
+        return CommentDtoRequest.builder()
+                .comment("salam")
+                .star(3.4)
                 .build();
     }
 
