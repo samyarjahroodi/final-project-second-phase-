@@ -2,7 +2,6 @@ package finalproject.finalproject.service.impl;
 
 
 import finalproject.finalproject.Entity.payment.Card;
-import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
@@ -14,9 +13,7 @@ import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
-import finalproject.finalproject.service.dto.request.CommentDtoRequest;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -185,11 +182,6 @@ public class CustomerServiceImpl
 
 
     public Expert findApprovedExpert(CustomerOrder customerOrder) {
-  /*      return customerOrder.getSuggestions().stream()
-                .filter(Suggestion::getIsApproved)
-                .map(Suggestion::getExpert)
-                .findFirst()
-                .orElse(null);*/
         return customerOrder.getSuggestions().get(0).getExpert();
     }
 

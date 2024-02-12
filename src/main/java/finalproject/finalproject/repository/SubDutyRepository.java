@@ -17,4 +17,6 @@ public interface SubDutyRepository
     @Modifying
     void deleteSubDutyFromTheExistDuty(@Param("subDuty") SubDuty subDuty);
 
+    boolean existsByName(String name);
+
 }

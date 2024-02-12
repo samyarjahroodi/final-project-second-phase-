@@ -41,8 +41,6 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
             if (search.getRole() != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), search.getRole()));
             }
-
-
             if (search.getEmail() != null) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("email"), search.getEmail()));
             }

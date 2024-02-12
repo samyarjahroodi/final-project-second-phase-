@@ -1,13 +1,11 @@
 package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.payment.Card;
-import finalproject.finalproject.exception.DuplicateException;
-import finalproject.finalproject.exception.NotValidSizeException;
-import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.CardRepository;
 import finalproject.finalproject.service.CardService;
 
 import finalproject.finalproject.service.dto.request.CardDtoRequest;
+import finalproject.finalproject.service.validation.ValidateCardDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,29 +23,21 @@ import java.util.Optional;
 public class CardServiceImpl
         implements CardService {
     private final CardRepository cardRepository;
-    private final CustomerServiceImpl customerService;
 
-    public Card creatCard(CardDtoRequest dto) {
-        if (dto.getCardNumber() == null){
-            throw new NullInputException("card number cannot be null");
-        }
-            Card card = new Card();
-        card.setCardNumber(dto.getCardNumber());
-        for (Card c : cardRepository.findAll()) {
-            if (c.getCardNumber().equals(card.getCardNumber())) {
-                throw new DuplicateException("card number already exists in database");
-            }
-        }
-        if (card.getCardNumber().length() != 16) {
-            throw new NotValidSizeException("card number should be 16");
-        }
+    public Card createCard(CardDtoRequest dto) {
+        ValidateCardDto.validateCardDto(dto);
+        Card card = Card.builder()
+                .cardNumber(dto.getCardNumber())
+                .cvv2(dto.getCvv2())
+                .password(dto.getPassword())
+                .build();
 
-        card.setCvv2(dto.getCvv2());
-        card.setPassword(dto.getPassword());
         int year = dto.getYear() + 1400;
         LocalDate expireDate = LocalDate.of(year, dto.getMonth(), 1);
         card.setExpireDate(expireDate);
+
         cardRepository.save(card);
+
         return card;
     }
 

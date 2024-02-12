@@ -33,6 +33,11 @@ public class DutyServiceImpl
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return dutyRepository.existsByName(name);
+    }
+
+    @Override
     public <S extends Duty> S save(S entity) {
         return dutyRepository.save(entity);
     }

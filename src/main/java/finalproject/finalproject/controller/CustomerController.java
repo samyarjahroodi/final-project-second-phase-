@@ -31,7 +31,6 @@ public class CustomerController {
     private final CardServiceImpl cardService;
     private final CommentServiceImpl commentService;
     private final SuggestionServiceImpl suggestionService;
-    private final RealCaptchaServiceImpl captchaService;
 
     @GetMapping("/find-By-Username-And-Password")
     public ResponseEntity<UserDtoResponseToLogin> findByUsernameAndPassword(@RequestBody UserDtoRequestToLogin dto) {
@@ -95,6 +94,7 @@ public class CustomerController {
 
     @PostMapping("/payment")
     public ResponseEntity<String> processPayment(@RequestBody CardDtoRequest dto) {
+        cardService.createCard(dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -106,6 +106,5 @@ public class CustomerController {
         customerService.changeStatusToStarted(customerById, suggestionById, LocalDate.now());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
 

@@ -10,5 +10,5 @@ import java.util.List;
 @Service
 public interface DutyService extends BaseService<Duty,Integer> {
     List<SubDuty> showSubDutiesOfSpecificDuty(Duty duty);
-
+    boolean existsByName(String name);
 }

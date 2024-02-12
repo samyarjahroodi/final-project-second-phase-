@@ -43,43 +43,62 @@ public class AdminServiceImpl
 
     @Override
     public Duty createDuty(DutyDtoRequest dto) {
-        if (dto == null) {
-            throw new NullInputException("dto cannot be null");
+        validateDtoForCreateDuty(dto);
+
+        if (dutyService.existsByName(dto.getName())) {
+            throw new DuplicateException("This name exists in the database");
         }
-        if (dto.getName() == null) {
-            throw new NullInputException("dto name cannot be null");
-        }
-        String dtoName = dto.getName();
-        if (dutyService.findAll().stream().anyMatch(d -> d.getName().equals(dtoName))) {
-            throw new DuplicateException("You already have this duty");
-        }
+
         Duty duty = Duty.builder()
                 .name(dto.getName())
                 .build();
         return dutyService.save(duty);
     }
 
-    @Override
-    public SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty) {
-        if (dto == null || dto.getPrice() == null || dto.getDescription() == null || dto.getName() == null) {
-            throw new NullInputException("dto fields cannot be null");
+    private void validateDtoForCreateDuty(DutyDtoRequest dto) {
+        if (dto == null) {
+            throw new NullInputException("DTO cannot be null");
         }
-        Optional<Duty> dutyById = dutyService.findById(duty.getId());
-        if (dutyById.isPresent()) {
-            SubDuty subDuty = SubDuty.builder()
-                    .name(dto.getName())
-                    .description(dto.getDescription())
-                    .duty(duty)
-                    .price(dto.getPrice())
-                    .build();
-            if (subDutyService.findAll().stream().anyMatch(s -> s.getName().equals(subDuty.getName()))) {
-                throw new DuplicateException("you already have this sub duty");
-            }
-            return subDutyService.save(subDuty);
-        } else {
-            throw new NullInputException("The given id must not be null");
+        if (dto.getName() == null) {
+            throw new NullInputException("DTO name cannot be null");
         }
     }
+
+
+    @Override
+    public SubDuty createSubDuty(SubDutyDtoRequest dto, Duty duty) {
+        validateDtoForCreatingSubDuty(dto);
+        validateDuty(duty);
+
+        if (subDutyService.existsByName(dto.getName())) {
+            throw new DuplicateException("This name exists in the database");
+        }
+
+        SubDuty subDuty = SubDuty.builder()
+                .name(dto.getName())
+                .description(dto.getDescription())
+                .duty(duty)
+                .price(dto.getPrice())
+                .build();
+
+        return subDutyService.save(subDuty);
+    }
+
+    private void validateDtoForCreatingSubDuty(SubDutyDtoRequest dto) {
+        if (dto == null || dto.getPrice() == null || dto.getDescription() == null || dto.getName() == null) {
+            throw new NullInputException("DTO fields cannot be null");
+        }
+    }
+
+    private void validateDuty(Duty duty) {
+        if (duty == null || duty.getId() == null) {
+            throw new NullInputException("The given duty must not be null");
+        }
+        if (!dutyService.findById(duty.getId()).isPresent()) {
+            throw new NullInputException("The duty with the given ID does not exist");
+        }
+    }
+
 
     @Override
     public void deleteDuty(Duty duty) {

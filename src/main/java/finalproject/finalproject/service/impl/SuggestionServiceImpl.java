@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,49 +35,67 @@ public class SuggestionServiceImpl
 
     @Override
     public void createSuggestionForExpert(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) {
+        validateExpertStatus(expert);
+        ensureNoApprovedSuggestions(customerOrder);
+        ensureExpertHasSubDuty(expert, customerOrder);
+
+        validateCustomerOrderStatus(customerOrder);
+
+        createSuggestion(expert, dto, customerOrder);
+    }
+
+    private void validateExpertStatus(Expert expert) {
         if (!expert.getRegistrationStatus().equals(RegistrationStatus.ACCEPTED)) {
-            throw new StatusException("your status must be accepted");
+            throw new StatusException("Your status must be accepted");
         }
-        if (isThereAnyApproveSuggestion(customerOrder)) {
+    }
+
+    private void ensureNoApprovedSuggestions(CustomerOrder customerOrder) {
+        if (isThereAnyApprovedSuggestion(customerOrder)) {
             throw new StatusException("This suggestion has already been approved");
         }
+    }
+
+    private void ensureExpertHasSubDuty(Expert expert, CustomerOrder customerOrder) {
         List<SubDuty> subDuties = suggestionRepository.giveSubDutiesOfExpert(expert);
         if (!subDuties.contains(customerOrder.getSubDuty())) {
-            throw new PermissionException("you dont have this permission to create a suggestion because you dont have this sub duty");
-        }
-        if (customerOrder.getStatus().equals(WAITING_FOR_THE_SUGGESTION_OF_EXPERTS)
-                || customerOrder.getStatus().equals(WAITING_EXPERT_SELECTION)) {
-            Suggestion suggestion = Suggestion.builder()
-                    .suggestedPrice(dto.getSuggestedPrice())
-                    .whenSuggestionCreated(dto.getWhenSuggestionCreated())
-                    .hoursThatTaken(dto.getHoursThatTaken())
-                    .suggestedTimeToStartTheProject(dto.getSuggestedTimeToStartTheProject())
-                    .order(customerOrder)
-                    .expert(expert)
-                    .build();
-            if (suggestion.getSuggestedPrice() < customerOrder.getSubDuty().getPrice()) {
-                throw new PriceException("your price is less than the expected price for this service");
-            }
-            if (suggestion.getSuggestedTimeToStartTheProject().isBefore(ZonedDateTime.now())) {
-                throw new TimeException("your time to start the project is before now");
-            }
-            customerOrder.setStatus(WAITING_EXPERT_SELECTION);
-            customerOrderService.save(customerOrder);
-            suggestionRepository.save(suggestion);
-
-        } else {
-            throw new StatusException("Whether the status is WAITING_FOR_THE_EXPERT_TO_COME_TO_YOUR_PLACE,STARTED,FINISHED or BEEN_PAID");
+            throw new PermissionException("You don't have permission to create a suggestion because you don't have this subduty");
         }
     }
 
-    private boolean isThereAnyApproveSuggestion(CustomerOrder customerOrder) {
-        for (Suggestion suggestion : customerOrder.getSuggestions()) {
-            if (suggestion.getIsApproved().equals(true)) {
-                return true;
-            }
+    private void validateCustomerOrderStatus(CustomerOrder customerOrder) {
+        if (!Arrays.asList(WAITING_FOR_THE_SUGGESTION_OF_EXPERTS, WAITING_EXPERT_SELECTION).contains(customerOrder.getStatus())) {
+            throw new StatusException("Invalid order status");
         }
-        return false;
     }
+
+    private void createSuggestion(Expert expert, SuggestionDtoRequest dto, CustomerOrder customerOrder) {
+        Suggestion suggestion = Suggestion.builder()
+                .suggestedPrice(dto.getSuggestedPrice())
+                .whenSuggestionCreated(dto.getWhenSuggestionCreated())
+                .hoursThatTaken(dto.getHoursThatTaken())
+                .suggestedTimeToStartTheProject(dto.getSuggestedTimeToStartTheProject())
+                .order(customerOrder)
+                .expert(expert)
+                .build();
+
+        if (suggestion.getSuggestedPrice() < customerOrder.getSubDuty().getPrice()) {
+            throw new PriceException("Your price is less than the expected price for this service");
+        }
+
+        if (suggestion.getSuggestedTimeToStartTheProject().isBefore(ZonedDateTime.now())) {
+            throw new TimeException("Your time to start the project is before now");
+        }
+
+        customerOrder.setStatus(WAITING_EXPERT_SELECTION);
+        customerOrderService.save(customerOrder);
+        suggestionRepository.save(suggestion);
+    }
+
+    private boolean isThereAnyApprovedSuggestion(CustomerOrder customerOrder) {
+        return customerOrder.getSuggestions().stream().anyMatch(Suggestion::getIsApproved);
+    }
+
 
     @Override
     public void approveSuggestion(Suggestion suggestion) {

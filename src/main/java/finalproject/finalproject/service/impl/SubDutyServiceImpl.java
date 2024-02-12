@@ -33,6 +33,11 @@ public class SubDutyServiceImpl
     }
 
     @Override
+    public boolean existsByName(String name) {
+        return subDutyRepository.existsByName(name);
+    }
+
+    @Override
     public <S extends SubDuty> S save(S entity) {
         return subDutyRepository.save(entity);
     }

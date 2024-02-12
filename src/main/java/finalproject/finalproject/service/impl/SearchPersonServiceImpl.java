@@ -5,7 +5,6 @@ import finalproject.finalproject.repository.PersonRepository;
 import finalproject.finalproject.service.SearchPersonService;
 
 import finalproject.finalproject.service.dto.request.SearchForPerson;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

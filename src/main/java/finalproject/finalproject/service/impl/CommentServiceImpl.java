@@ -3,7 +3,6 @@ package finalproject.finalproject.service.impl;
 import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
-import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.exception.StatusException;
 import finalproject.finalproject.repository.CommentRepository;
 import finalproject.finalproject.service.CommentService;
@@ -23,7 +22,6 @@ import java.util.Optional;
 @Transactional
 public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
-    private final CustomerOrderServiceImpl customerOrderService;
 
     @Override
     public Comment addCommentForCustomerId(CustomerOrder customerOrder, CommentDtoRequest dto) {
