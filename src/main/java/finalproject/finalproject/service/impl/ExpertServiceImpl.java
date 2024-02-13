@@ -3,15 +3,18 @@ package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
-import finalproject.finalproject.exception.NotValidFormatFileException;
+import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.NotValidSizeException;
 import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.ExpertRepository;
 import finalproject.finalproject.repository.SubDutyRepository;
 import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.ExpertService;
+import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
+import finalproject.finalproject.service.validation.ValidateExpertDto;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +27,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_CONFIRMATION;
 
 
 @Service
@@ -35,13 +41,38 @@ public class ExpertServiceImpl
         extends PersonServiceImpl<Expert, ExpertRepository>
         implements ExpertService {
 
-    private final WalletRepository walletRepository;
+    private final WalletServiceImpl walletService;
     private final SubDutyServiceImpl subDutyService;
 
-    public ExpertServiceImpl(ExpertRepository repository, WalletRepository walletRepository, SubDutyRepository subDutyRepository, SubDutyServiceImpl subDutyService) {
+    public ExpertServiceImpl(ExpertRepository repository, SubDutyRepository subDutyRepository, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService) {
         super(repository);
-        this.walletRepository = walletRepository;
+        this.walletService = walletService;
         this.subDutyService = subDutyService;
+    }
+
+    @Override
+    public void createExpert(ExpertDtoRequest dto) throws IOException {
+        ValidateExpertDto.validateExpertDtoRequest(dto);
+        Wallet wallet = Wallet.builder()
+                .creditOfWallet(0)
+                .build();
+        walletService.save(wallet);
+
+        Expert expert = Expert.builder()
+                .firstname(dto.getFirstname())
+                .lastname(dto.getLastname())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .username(dto.getUsername())
+                .wallet(wallet)
+                .role(Role.ROLE_EXPERT)
+                .registrationStatus(AWAITING_CONFIRMATION)
+                .whenExpertRegistered(LocalDate.now())
+                .image(setImageForExpert(dto.getPathName()))
+                .fieldOfEndeavor(dto.getFieldOfEndeavor())
+                .build();
+
+        repository.save(expert);
     }
 
 

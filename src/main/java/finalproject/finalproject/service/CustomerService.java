@@ -1,11 +1,9 @@
 package finalproject.finalproject.service;
 
 import finalproject.finalproject.Entity.payment.Card;
-import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
-import finalproject.finalproject.service.dto.request.CommentDtoRequest;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
 import org.springframework.stereotype.Service;
 

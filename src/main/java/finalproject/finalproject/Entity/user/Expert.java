@@ -42,4 +42,5 @@ public class Expert extends Person {
 
     private String fieldOfEndeavor;
 
+    private Role role;
 }

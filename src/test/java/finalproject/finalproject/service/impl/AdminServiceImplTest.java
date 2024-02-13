@@ -89,7 +89,6 @@ class AdminServiceImplTest extends BaseTest {
 
     @Test
     void createSubDutyForTestNotFoundDuty() {
-        DutyDtoRequest dutyDto = createDutyDto();
         SubDutyDtoRequest subDutyDto = createSubDutyDto(300);
         Duty duty = Duty.builder()
                 .name("ware house color")
@@ -147,14 +146,14 @@ class AdminServiceImplTest extends BaseTest {
     @Test
     void createExpertForTest() throws IOException {
         ExpertDtoRequest expertDto = createExpertDto();
-        adminService.createExpert(expertDto);
+        expertService.createExpert(expertDto);
         assertEquals(1, expertRepository.findAll().size());
     }
 
     @Test
     void createExpertForTestWithNullExpertDto() {
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class
-                , () -> adminService.createExpert(null));
+                , () -> expertService.createExpert(null));
         assertEquals("dto cannot be null", illegalArgumentException.getMessage());
     }
 

@@ -1,6 +1,7 @@
 package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.payment.Card;
+import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.CardRepository;
 import finalproject.finalproject.service.CardService;
 
@@ -93,6 +94,6 @@ public class CardServiceImpl
 
     @Override
     public Card getReferenceById(Integer integer) {
-        return cardRepository.getOne(integer);
+        return cardRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }

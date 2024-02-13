@@ -1,5 +1,5 @@
 package finalproject.finalproject.Entity.user;
 
 public enum Role {
-    EXPERT,CUSTOMER
+    ROLE_EXPERT,ROLE_CUSTOMER,ROLE_ADMIN
 }

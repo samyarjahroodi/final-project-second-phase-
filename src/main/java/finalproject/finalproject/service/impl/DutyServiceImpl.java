@@ -89,6 +89,6 @@ public class DutyServiceImpl
 
     @Override
     public Duty getReferenceById(Integer integer) {
-        return dutyRepository.getReferenceById(integer);
+        return dutyRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 }

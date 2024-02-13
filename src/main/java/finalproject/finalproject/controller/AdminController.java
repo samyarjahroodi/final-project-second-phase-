@@ -86,13 +86,6 @@ public class AdminController {
         return new ResponseEntity<>(subDutyDtoResponse, HttpStatus.OK);
     }
 
-    @PostMapping("/createExpert")
-    public ResponseEntity<ExpertDtoResponse> createExpert(@RequestBody ExpertDtoRequest dto) throws IOException {
-        Expert expert = ExpertMapper.INSTANCE.requestDtoToModel(dto);
-        adminService.createExpert(dto);
-        ExpertDtoResponse expertDtoResponse = modelMapper.map(expert, ExpertDtoResponse.class);
-        return new ResponseEntity<>(expertDtoResponse, HttpStatus.CREATED);
-    }
 
     @PutMapping("/add-Sub-Duty-To-New-Expert/{expertId}/{subDutyId}")
     public ResponseEntity<String> addSubDutyToNewExpert(@PathVariable Integer expertId, @PathVariable Integer subDutyId) {
@@ -117,13 +110,6 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-Expert/{expertId}")
-    public ResponseEntity<String> deleteExpert(@PathVariable Integer expertId) {
-        Expert expertById = expertService.getReferenceById(expertId);
-        adminService.deleteExpert(expertById);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PutMapping("/change-The-Status-Of-Expert/{expertId}")
     public ResponseEntity<String> changeTheStatusOfExpert(@PathVariable Integer expertId) {
         Expert expertById = expertService.getReferenceById(expertId);
@@ -131,9 +117,24 @@ public class AdminController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete-Expert/{expertId}")
+    public ResponseEntity<String> deleteExpert(@PathVariable Integer expertId) {
+        Expert expertById = expertService.getReferenceById(expertId);
+        adminService.deleteExpert(expertById);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
     @GetMapping("/search")
     public List<Person> search(@RequestBody SearchForPerson search) {
         return adminService.search(search);
+    }
+
+
+    @GetMapping("/show-Sub-Duties-Of-Specific-Duty/{dutyId}")
+    public List<SubDuty> showSubDutiesOfSpecificDuty(@PathVariable Integer dutyId) {
+        Duty dutyById = dutyService.getReferenceById(dutyId);
+        return dutyService.showSubDutiesOfSpecificDuty(dutyById);
     }
 
 }

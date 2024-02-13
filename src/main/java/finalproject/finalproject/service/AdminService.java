@@ -1,17 +1,14 @@
 package finalproject.finalproject.service;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
-import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -28,8 +25,6 @@ public interface AdminService {
     List<SubDuty> showSubDuties();
 
     void updateDetailsForSubDuty(SubDutyDtoRequest dto, SubDuty subDuty);
-
-    void createExpert(ExpertDtoRequest dto) throws IOException;
 
     void addSubDutyToDutyByAdmin(Duty duty, List<SubDuty> subDuties);
 

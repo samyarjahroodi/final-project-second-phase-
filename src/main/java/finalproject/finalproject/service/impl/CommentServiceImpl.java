@@ -3,6 +3,7 @@ package finalproject.finalproject.service.impl;
 import finalproject.finalproject.Entity.operation.Comment;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Status;
+import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.exception.StatusException;
 import finalproject.finalproject.repository.CommentRepository;
 import finalproject.finalproject.service.CommentService;
@@ -95,7 +96,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment getReferenceById(Integer integer) {
-        return commentRepository.getReferenceById(integer);
+        return commentRepository.findById(integer).orElseThrow(() -> new NullInputException("null"));
     }
 
 

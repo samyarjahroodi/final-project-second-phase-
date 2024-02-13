@@ -3,29 +3,21 @@ package finalproject.finalproject.service.impl;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
-import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Person;
-import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.DuplicateException;
 import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
-import finalproject.finalproject.repository.*;
 import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
-import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
-import finalproject.finalproject.service.validation.ValidateExpertDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.time.LocalDate;
 import java.util.*;
 
-import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_CONFIRMATION;
 
 
 @AllArgsConstructor
@@ -33,9 +25,7 @@ import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_
 @Service
 public class AdminServiceImpl
         implements AdminService {
-    private final AdminRepository adminRepository;
     private final DutyServiceImpl dutyService;
-    private final WalletServiceImpl walletService;
     private final ExpertServiceImpl expertService;
     private final SubDutyService subDutyService;
     private final SearchPersonServiceImpl searchPersonService;
@@ -94,7 +84,7 @@ public class AdminServiceImpl
         if (duty == null || duty.getId() == null) {
             throw new NullInputException("The given duty must not be null");
         }
-        if (!dutyService.findById(duty.getId()).isPresent()) {
+        if (dutyService.findById(duty.getId()).isEmpty()) {
             throw new NullInputException("The duty with the given ID does not exist");
         }
     }
@@ -131,30 +121,6 @@ public class AdminServiceImpl
         }
     }
 
-    @Override
-    public void createExpert(ExpertDtoRequest dto) throws IOException {
-        ValidateExpertDto.validateExpertDtoRequest(dto);
-        Wallet wallet = Wallet.builder()
-                .creditOfWallet(0)
-                .build();
-        walletService.save(wallet);
-
-        Expert expert = Expert.builder()
-                .firstname(dto.getFirstname())
-                .lastname(dto.getLastname())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .username(dto.getUsername())
-                .wallet(wallet)
-                .role(Role.EXPERT)
-                .registrationStatus(AWAITING_CONFIRMATION)
-                .whenExpertRegistered(LocalDate.now())
-                .image(expertService.setImageForExpert(dto.getPathName()))
-                .fieldOfEndeavor(dto.getFieldOfEndeavor())
-                .build();
-
-        expertService.save(expert);
-    }
 
     @Override
     public void addSubDutyToDutyByAdmin(Duty duty, List<SubDuty> subDuties) {

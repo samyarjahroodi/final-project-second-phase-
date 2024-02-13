@@ -98,7 +98,7 @@ public class CustomerServiceImpl
                 .password(dto.getPassword())
                 .username(dto.getUsername())
                 .wallet(walletService.save(Wallet.builder().creditOfWallet(0).build()))
-                .role(Role.CUSTOMER)
+                .role(Role.ROLE_CUSTOMER)
                 .build();
 
         return repository.save(customer);
@@ -123,39 +123,55 @@ public class CustomerServiceImpl
 
     @Override
     public void payThePriceOfCustomerOrderByWallet(CustomerOrder customerOrder) {
+        validateCustomerOrder(customerOrder);
+        double priceOfTheCustomerOrder = customerOrder.getPrice();
+        Customer customer = customerOrder.getCustomer();
+        Expert expert = findApprovedExpert(customerOrder);
+        checkApprovedExpert(expert);
+        Wallet customerWallet = customer.getWallet();
+        Wallet expertWallet = expert.getWallet();
+        double customerCredit = customerWallet.getCreditOfWallet();
+        ensureCustomerHasEnoughCredit(customerCredit, priceOfTheCustomerOrder);
+
+        double expertShare = calculateExpertShare(priceOfTheCustomerOrder);
+        updateWalletsAndOrderStatus(customerWallet, expertWallet, expertShare, customerOrder);
+    }
+
+    private void validateCustomerOrder(CustomerOrder customerOrder) {
         if (customerOrder == null) {
-            throw new NullInputException("customer Order cannot be null");
+            throw new NullInputException("Customer Order cannot be null");
         }
-        if (customerOrder.getStatus() == Status.FINISHED) {
-            double priceOfTheCustomerOrder = customerOrder.getPrice();
-            Customer customer = customerOrder.getCustomer();
-            Expert expert = findApprovedExpert(customerOrder);
-
-            if (expert != null) {
-                Wallet customerWallet = customer.getWallet();
-                Wallet expertWallet = expert.getWallet();
-
-                double customerCredit = customerWallet.getCreditOfWallet();
-
-                if (customerCredit >= priceOfTheCustomerOrder) {
-                    double expertShare = priceOfTheCustomerOrder * 0.7;
-
-                    customerWallet.setCreditOfWallet(customerCredit - priceOfTheCustomerOrder);
-                    expertWallet.setCreditOfWallet(expertWallet.getCreditOfWallet() + expertShare);
-                    walletService.save(expertWallet);
-                    customerOrder.setStatus(Status.BEEN_PAID);
-                    walletService.save(customerWallet);
-                    customerOrderService.save(customerOrder);
-                } else {
-                    throw new NotEnoughCreditException("Customer does not have enough credit to pay");
-                }
-            } else {
-                throw new StatusException("No approved expert found for this order");
-            }
-        } else {
-            throw new StatusException("your order has not done yet");
+        if (customerOrder.getStatus() != Status.FINISHED) {
+            throw new StatusException("Your order has not been finished yet");
         }
     }
+
+    private void checkApprovedExpert(Expert expert) {
+        if (expert == null) {
+            throw new StatusException("No approved expert found for this order");
+        }
+    }
+
+    private void ensureCustomerHasEnoughCredit(double customerCredit, double priceOfTheCustomerOrder) {
+        if (customerCredit < priceOfTheCustomerOrder) {
+            throw new NotEnoughCreditException("Customer does not have enough credit to pay");
+        }
+    }
+
+    private double calculateExpertShare(double priceOfTheCustomerOrder) {
+        return priceOfTheCustomerOrder * 0.7;
+    }
+
+    private void updateWalletsAndOrderStatus(Wallet customerWallet, Wallet expertWallet, double expertShare, CustomerOrder customerOrder) {
+        double customerCredit = customerWallet.getCreditOfWallet();
+        customerWallet.setCreditOfWallet(customerCredit - customerOrder.getPrice());
+        expertWallet.setCreditOfWallet(expertWallet.getCreditOfWallet() + expertShare);
+        walletService.save(expertWallet);
+        customerOrder.setStatus(Status.BEEN_PAID);
+        walletService.save(customerWallet);
+        customerOrderService.save(customerOrder);
+    }
+
 
     @Modifying
     @Override

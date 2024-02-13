@@ -1,7 +1,5 @@
 package finalproject.finalproject.service;
 
-import ch.qos.logback.core.model.INamedModel;
-import com.fasterxml.jackson.databind.ser.Serializers;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;

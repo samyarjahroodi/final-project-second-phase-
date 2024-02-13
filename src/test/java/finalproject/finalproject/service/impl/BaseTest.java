@@ -81,7 +81,7 @@ public class BaseTest {
                 .password(expertDto.getPassword())
                 .username(expertDto.getUsername())
                 .image(expertService.setImageForExpert(imagePath))
-                .role(Role.EXPERT)
+                .role(Role.ROLE_EXPERT)
                 .build();
         expert.setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
         expert.setWhenExpertRegistered(LocalDate.now());

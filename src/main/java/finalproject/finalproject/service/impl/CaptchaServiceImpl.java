@@ -12,16 +12,16 @@ public class CaptchaServiceImpl implements CaptchaService {
     private static final int CAPTCHA_LENGTH = 4;
 
     public String generateCaptcha(HttpSession session) {
-        String captcha = generateString(CAPTCHA_LENGTH);
+        String captcha = generateString();
         session.setAttribute("captcha", captcha);
         return captcha;
     }
 
-    private String generateString(int length) {
+    private String generateString() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567890";
         StringBuilder captcha = new StringBuilder();
         Random random = new Random();
-        while (captcha.length() < length) {
+        while (captcha.length() < CaptchaServiceImpl.CAPTCHA_LENGTH) {
             int index = (int) (random.nextFloat() * characters.length());
             captcha.append(characters.charAt(index));
         }
