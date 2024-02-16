@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface PersonRepository<T extends Person>
         extends JpaRepository<T, Integer>, JpaSpecificationExecutor<T> {
 
+    T findByVerificationCode(String verificationCode);
+
 }

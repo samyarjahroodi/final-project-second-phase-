@@ -5,6 +5,7 @@ import finalproject.finalproject.repository.PersonRepository;
 import finalproject.finalproject.service.SearchPersonService;
 
 import finalproject.finalproject.service.dto.request.SearchForPerson;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +18,8 @@ public class SearchPersonServiceImpl
         implements SearchPersonService {
 
 
-    public SearchPersonServiceImpl(PersonRepository<Person> repository) {
-        super(repository);
+    public SearchPersonServiceImpl(PersonRepository<Person> repository, JavaMailSender mailSender) {
+        super(repository, mailSender);
     }
 
     @Override

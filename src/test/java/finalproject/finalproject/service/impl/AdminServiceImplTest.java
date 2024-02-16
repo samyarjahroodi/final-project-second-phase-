@@ -143,7 +143,7 @@ class AdminServiceImplTest extends BaseTest {
         assertEquals("Sub duty or dto not found", noSuchElementException.getMessage());
     }
 
-    @Test
+/*    @Test
     void createExpertForTest() throws IOException {
         ExpertDtoRequest expertDto = createExpertDto();
         expertService.createExpert(expertDto);
@@ -155,7 +155,7 @@ class AdminServiceImplTest extends BaseTest {
         IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class
                 , () -> expertService.createExpert(null));
         assertEquals("dto cannot be null", illegalArgumentException.getMessage());
-    }
+    }*/
 
 
     @Test

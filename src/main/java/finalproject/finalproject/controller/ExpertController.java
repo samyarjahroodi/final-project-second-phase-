@@ -11,6 +11,7 @@ import finalproject.finalproject.service.dto.request.SuggestionDtoRequest;
 import finalproject.finalproject.service.dto.response.ExpertDtoResponse;
 import finalproject.finalproject.service.dto.response.SuggestionDtoResponse;
 import finalproject.finalproject.service.impl.*;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -31,9 +32,10 @@ public class ExpertController {
     private final SuggestionServiceImpl suggestionService;
 
     @PostMapping("/createExpert")
-    public ResponseEntity<ExpertDtoResponse> createExpert(@RequestBody ExpertDtoRequest dto) throws IOException {
+    public ResponseEntity<ExpertDtoResponse> createExpert(@RequestBody ExpertDtoRequest dto, HttpServletRequest request) throws IOException {
         Expert expert = ExpertMapper.INSTANCE.requestDtoToModel(dto);
-        expertService.createExpert(dto);
+        String siteURL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+        expertService.createExpert(dto, siteURL);
         ExpertDtoResponse expertDtoResponse = modelMapper.map(expert, ExpertDtoResponse.class);
         return new ResponseEntity<>(expertDtoResponse, HttpStatus.CREATED);
     }

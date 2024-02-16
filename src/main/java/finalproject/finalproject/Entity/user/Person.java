@@ -29,7 +29,16 @@ public class Person extends BaseEntity<Integer> {
 
     private String username;
 
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
+    @Column(name = "verification_code", length = 64)
+    private String verificationCode;
+
+    private boolean enabled;
+
+    private boolean isVerified;
 
 }

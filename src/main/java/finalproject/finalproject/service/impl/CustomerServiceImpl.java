@@ -11,13 +11,14 @@ import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.*;
 import finalproject.finalproject.repository.CustomerRepository;
-import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.CustomerService;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
+import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import static finalproject.finalproject.service.validation.ValidateUserDto.valid
 
 @Service
 @Transactional
+
 public class CustomerServiceImpl
         extends PersonServiceImpl<Customer, CustomerRepository>
         implements CustomerService {
@@ -38,16 +40,29 @@ public class CustomerServiceImpl
     private final WalletServiceImpl walletService;
     private final CustomerOrderServiceImpl customerOrderService;
     private final ExpertServiceImpl expertService;
-    private final CommentServiceImpl commentService;
 
-    public CustomerServiceImpl(CustomerRepository repository, WalletRepository walletRepository, WalletServiceImpl walletService,
-                               CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService, CommentServiceImpl commentService) {
-        super(repository);
+    public CustomerServiceImpl(CustomerRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService) {
+        super(repository,mailSender);
         this.walletService = walletService;
         this.customerOrderService = customerOrderService;
         this.expertService = expertService;
-        this.commentService = commentService;
     }
+
+    public Customer createCustomer(UserDtoRequest dto, String siteURL) throws MessagingException {
+        validateUserDtoRequest(dto);
+        Customer customer = Customer.builder()
+                .firstname(dto.getFirstname())
+                .lastname(dto.getLastname())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .username(dto.getUsername())
+                .wallet(walletService.save(Wallet.builder().creditOfWallet(0).build()))
+                .role(Role.ROLE_CUSTOMER)
+                .build();
+        register(customer, siteURL);
+        return repository.save(customer);
+    }
+
 
     @Override
     public Customer findByUsernameAndPassword(String username, String password) {
@@ -87,21 +102,6 @@ public class CustomerServiceImpl
         customerOrder.setStatus(Status.FINISHED);
         customerOrder.setTimeThatStatusChangedToFinished(zonedDateTime);
         customerOrderService.save(customerOrder);
-    }
-
-    public Customer createCustomer(UserDtoRequest dto) {
-        validateUserDtoRequest(dto);
-        Customer customer = Customer.builder()
-                .firstname(dto.getFirstname())
-                .lastname(dto.getLastname())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .username(dto.getUsername())
-                .wallet(walletService.save(Wallet.builder().creditOfWallet(0).build()))
-                .role(Role.ROLE_CUSTOMER)
-                .build();
-
-        return repository.save(customer);
     }
 
 

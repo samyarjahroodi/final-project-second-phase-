@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public interface ExpertService extends PersonService<Expert>, BaseService<Expert, Integer> {
-    void createExpert(ExpertDtoRequest dto) throws IOException;
+    Expert createExpert(ExpertDtoRequest dto, String siteURL) throws IOException;
 
     void averageStarOfExpert(Expert expert);
 

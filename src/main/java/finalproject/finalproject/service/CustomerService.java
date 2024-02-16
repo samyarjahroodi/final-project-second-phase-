@@ -5,6 +5,7 @@ import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
+import jakarta.mail.MessagingException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,7 +22,7 @@ public interface CustomerService extends BaseService<Customer, Integer> {
 
     void changeStatusOfCustomerOrderToFinished(CustomerOrder customerOrder, ZonedDateTime zonedDateTime);
 
-    Customer createCustomer(UserDtoRequest dto);
+    Customer createCustomer(UserDtoRequest dto, String siteURL) throws MessagingException;
 
     String changePassword(String username, String oldPassword, String password);
 

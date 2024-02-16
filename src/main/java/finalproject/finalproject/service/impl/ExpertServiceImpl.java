@@ -10,8 +10,6 @@ import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.NotValidSizeException;
 import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.ExpertRepository;
-import finalproject.finalproject.repository.SubDutyRepository;
-import finalproject.finalproject.repository.WalletRepository;
 import finalproject.finalproject.service.ExpertService;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.validation.ValidateExpertDto;
@@ -19,6 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_CONFIRMATION;
+import static finalproject.finalproject.Entity.user.RegistrationStatus.NEW;
 
 
 @Service
@@ -44,19 +44,20 @@ public class ExpertServiceImpl
     private final WalletServiceImpl walletService;
     private final SubDutyServiceImpl subDutyService;
 
-    public ExpertServiceImpl(ExpertRepository repository, SubDutyRepository subDutyRepository, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService) {
-        super(repository);
+    public ExpertServiceImpl(ExpertRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService) {
+        super(repository, mailSender);
         this.walletService = walletService;
         this.subDutyService = subDutyService;
     }
 
+
     @Override
-    public void createExpert(ExpertDtoRequest dto) throws IOException {
+    public Expert createExpert(ExpertDtoRequest dto, String siteURL) throws IOException {
         ValidateExpertDto.validateExpertDtoRequest(dto);
-        Wallet wallet = Wallet.builder()
+       /* Wallet wallet = Wallet.builder()
                 .creditOfWallet(0)
                 .build();
-        walletService.save(wallet);
+        walletService.save(wallet);*/
 
         Expert expert = Expert.builder()
                 .firstname(dto.getFirstname())
@@ -64,15 +65,15 @@ public class ExpertServiceImpl
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .username(dto.getUsername())
-                .wallet(wallet)
+                .wallet((walletService.save(Wallet.builder().creditOfWallet(0).build())))
                 .role(Role.ROLE_EXPERT)
-                .registrationStatus(AWAITING_CONFIRMATION)
+                .registrationStatus(NEW)
                 .whenExpertRegistered(LocalDate.now())
                 .image(setImageForExpert(dto.getPathName()))
                 .fieldOfEndeavor(dto.getFieldOfEndeavor())
                 .build();
-
-        repository.save(expert);
+        register(expert, siteURL);
+        return repository.save(expert);
     }
 
 

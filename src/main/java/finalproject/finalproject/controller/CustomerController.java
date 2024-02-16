@@ -12,6 +12,8 @@ import finalproject.finalproject.mapper.SuggestionMapper;
 import finalproject.finalproject.service.dto.request.*;
 import finalproject.finalproject.service.dto.response.*;
 import finalproject.finalproject.service.impl.*;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -42,9 +44,10 @@ public class CustomerController {
 
 
     @PostMapping("/create-Customer")
-    public ResponseEntity<UserDtoResponse> createCustomer(@RequestBody UserDtoRequest dto) {
+    public ResponseEntity<UserDtoResponse> createCustomer(@RequestBody UserDtoRequest dto, HttpServletRequest request) throws MessagingException {
         Customer customer = CustomerMapper.INSTANCE.requestDtoToModel(dto);
-        customerService.createCustomer(dto);
+        String siteURL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
+        customerService.createCustomer(dto,siteURL);
         UserDtoResponse userDtoResponse = modelMapper.map(customer, UserDtoResponse.class);
         return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
     }
