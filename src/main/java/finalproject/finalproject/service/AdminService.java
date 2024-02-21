@@ -2,6 +2,7 @@ package finalproject.finalproject.service;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.user.Admin;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
@@ -39,4 +40,8 @@ public interface AdminService {
     void changeTheStatusOfExpert(Expert expert);
 
     List<Person> search(SearchForPerson search);
+
+    boolean existsByUsername(String name);
+
+    Admin save(Admin admin);
 }

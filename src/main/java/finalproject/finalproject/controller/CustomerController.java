@@ -3,12 +3,11 @@ package finalproject.finalproject.controller;
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.operation.Status;
 import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
-import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.mapper.CustomerMapper;
 import finalproject.finalproject.mapper.CustomerOrderMapper;
-import finalproject.finalproject.mapper.SuggestionMapper;
 import finalproject.finalproject.service.dto.request.*;
 import finalproject.finalproject.service.dto.response.*;
 import finalproject.finalproject.service.impl.*;
@@ -18,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -27,6 +27,7 @@ import java.util.List;
 
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @CrossOrigin
 @RequestMapping("/customer")
@@ -36,7 +37,6 @@ public class CustomerController {
     private final CustomerServiceImpl customerService;
     private final DutyServiceImpl dutyService;
     private final SubDutyServiceImpl subDutyService;
-    private final ExpertServiceImpl expertService;
     private final ModelMapper modelMapper;
     private final CardServiceImpl cardService;
     private final CommentServiceImpl commentService;
@@ -47,9 +47,34 @@ public class CustomerController {
     public ResponseEntity<UserDtoResponse> createCustomer(@RequestBody UserDtoRequest dto, HttpServletRequest request) throws MessagingException {
         Customer customer = CustomerMapper.INSTANCE.requestDtoToModel(dto);
         String siteURL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
-        customerService.createCustomer(dto,siteURL);
+        customerService.createCustomer(dto, siteURL);
         UserDtoResponse userDtoResponse = modelMapper.map(customer, UserDtoResponse.class);
         return new ResponseEntity<>(userDtoResponse, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/see-wallet-credit/{customerId}")
+    public double seeWalletCredit(@PathVariable Integer customerId) {
+        Customer customer = customerService.getReferenceById(customerId);
+        return customerService.seeWalletCredit(customer);
+    }
+
+    @GetMapping("/verify-customer")
+    public ResponseEntity<String> verify(@RequestParam String code) {
+        customerService.verify(code);
+        return new ResponseEntity<>("Email verified successfully", HttpStatus.OK);
+    }
+
+
+    @GetMapping("/get-orders/{customerId}")
+    public List<CustomerOrder> getOrder(@PathVariable Integer customerId) {
+        Customer customer = customerService.getReferenceById(customerId);
+        return customerService.showAllOrders(customer);
+    }
+
+    @GetMapping("/see-Customer-Order-By-Status/{customerId}")
+    public List<CustomerOrder> seeCustomerOrderByStatus(@PathVariable Integer customerId, @RequestBody Status status) {
+        Customer customer = customerService.getReferenceById(customerId);
+        return customerOrderService.seeCustomerOrderByStatus(customer, status);
     }
 
     @GetMapping("/find-By-Username-And-Password")

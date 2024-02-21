@@ -93,6 +93,11 @@ public class CustomerOrderServiceImpl
         }
     }
 
+    @Override
+    public List<CustomerOrder> seeCustomerOrderByStatus(Customer customer, Status status) {
+        return customerOrderRepository.seeCustomerOrderByStatus(customer,status);
+    }
+
 
     public Suggestion findSuggestionThatIsApproved(CustomerOrder customerOrder) {
         return customerOrder.getSuggestions().stream()

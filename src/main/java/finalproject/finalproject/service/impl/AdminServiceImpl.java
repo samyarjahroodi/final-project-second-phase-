@@ -2,11 +2,13 @@ package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.user.Admin;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.exception.DuplicateException;
 import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
+import finalproject.finalproject.repository.AdminRepository;
 import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
@@ -26,6 +28,7 @@ import java.util.*;
 public class AdminServiceImpl
         implements AdminService {
     private final DutyServiceImpl dutyService;
+    private final AdminRepository adminRepository;
     private final ExpertServiceImpl expertService;
     private final SubDutyService subDutyService;
     private final SearchPersonServiceImpl searchPersonService;
@@ -184,4 +187,16 @@ public class AdminServiceImpl
     public List<Person> search(SearchForPerson search) {
         return searchPersonService.search(search);
     }
+
+    @Override
+    public boolean existsByUsername(String name) {
+        return adminRepository.existsByUsername(name);
+    }
+
+    @Override
+    public Admin save(Admin admin) {
+        return adminRepository.save(admin) ;
+    }
+
+
 }

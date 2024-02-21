@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,12 +41,14 @@ public class CustomerServiceImpl
     private final WalletServiceImpl walletService;
     private final CustomerOrderServiceImpl customerOrderService;
     private final ExpertServiceImpl expertService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public CustomerServiceImpl(CustomerRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService) {
-        super(repository,mailSender);
+    public CustomerServiceImpl(CustomerRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService, BCryptPasswordEncoder passwordEncoder) {
+        super(repository, passwordEncoder, mailSender);
         this.walletService = walletService;
         this.customerOrderService = customerOrderService;
         this.expertService = expertService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Customer createCustomer(UserDtoRequest dto, String siteURL) throws MessagingException {
@@ -54,7 +57,7 @@ public class CustomerServiceImpl
                 .firstname(dto.getFirstname())
                 .lastname(dto.getLastname())
                 .email(dto.getEmail())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .username(dto.getUsername())
                 .wallet(walletService.save(Wallet.builder().creditOfWallet(0).build()))
                 .role(Role.ROLE_CUSTOMER)
@@ -194,6 +197,11 @@ public class CustomerServiceImpl
         } else {
             throw new StatusException("customer order status should be finished");
         }
+    }
+
+    @Override
+    public List<CustomerOrder> showAllOrders(Customer customer) {
+        return customer.getOrders();
     }
 
 

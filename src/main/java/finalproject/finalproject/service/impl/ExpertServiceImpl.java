@@ -12,12 +12,12 @@ import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.ExpertRepository;
 import finalproject.finalproject.service.ExpertService;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
-import finalproject.finalproject.service.validation.ValidateExpertDto;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,8 +30,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static finalproject.finalproject.Entity.user.RegistrationStatus.AWAITING_CONFIRMATION;
 import static finalproject.finalproject.Entity.user.RegistrationStatus.NEW;
+import static finalproject.finalproject.service.validation.ValidateUserDto.validateExpertDtoRequest;
 
 
 @Service
@@ -43,27 +43,24 @@ public class ExpertServiceImpl
 
     private final WalletServiceImpl walletService;
     private final SubDutyServiceImpl subDutyService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public ExpertServiceImpl(ExpertRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService) {
-        super(repository, mailSender);
+    public ExpertServiceImpl(ExpertRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService, BCryptPasswordEncoder passwordEncoder) {
+        super(repository, passwordEncoder, mailSender);
         this.walletService = walletService;
         this.subDutyService = subDutyService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
     @Override
     public Expert createExpert(ExpertDtoRequest dto, String siteURL) throws IOException {
-        ValidateExpertDto.validateExpertDtoRequest(dto);
-       /* Wallet wallet = Wallet.builder()
-                .creditOfWallet(0)
-                .build();
-        walletService.save(wallet);*/
-
+        validateExpertDtoRequest(dto);
         Expert expert = Expert.builder()
                 .firstname(dto.getFirstname())
                 .lastname(dto.getLastname())
                 .email(dto.getEmail())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .username(dto.getUsername())
                 .wallet((walletService.save(Wallet.builder().creditOfWallet(0).build())))
                 .role(Role.ROLE_EXPERT)

@@ -21,7 +21,7 @@ import java.util.List;
 public class Expert extends Person {
     @Column(name = "registration_status")
     @Enumerated(EnumType.STRING)
-    private RegistrationStatus registrationStatus = RegistrationStatus.NEW;
+    private RegistrationStatus registrationStatus;
 
     //when expert is registered!!
     @Column(name = "when_expert_registered")
@@ -36,9 +36,6 @@ public class Expert extends Person {
 
     @OneToMany(mappedBy = "expert")
     private List<Suggestion> suggestions;
-
-    @OneToOne
-    private Wallet wallet;
 
     private String fieldOfEndeavor;
 

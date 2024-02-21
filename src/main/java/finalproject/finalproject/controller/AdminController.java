@@ -5,14 +5,11 @@ import finalproject.finalproject.Entity.duty.SubDuty;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.mapper.DutyMapper;
-import finalproject.finalproject.mapper.ExpertMapper;
 import finalproject.finalproject.mapper.SubDutyMapper;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
-import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
 import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import finalproject.finalproject.service.dto.response.DutyDtoResponse;
-import finalproject.finalproject.service.dto.response.ExpertDtoResponse;
 import finalproject.finalproject.service.dto.response.SubDutyDtoResponse;
 import finalproject.finalproject.service.impl.AdminServiceImpl;
 import finalproject.finalproject.service.impl.DutyServiceImpl;
@@ -22,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 
@@ -38,7 +35,7 @@ public class AdminController {
     private final ModelMapper modelMapper;
     private final SubDutyServiceImpl subDutyService;
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create-duty")
     public ResponseEntity<DutyDtoResponse> createDuty(@RequestBody DutyDtoRequest dto) {
         DutyMapper.INSTANCE.requestDtoToModel(dto);

@@ -6,6 +6,7 @@ import finalproject.finalproject.service.SearchPersonService;
 
 import finalproject.finalproject.service.dto.request.SearchForPerson;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +19,8 @@ public class SearchPersonServiceImpl
         implements SearchPersonService {
 
 
-    public SearchPersonServiceImpl(PersonRepository<Person> repository, JavaMailSender mailSender) {
-        super(repository, mailSender);
+    public SearchPersonServiceImpl(PersonRepository<Person> repository, BCryptPasswordEncoder passwordEncoder, JavaMailSender mailSender) {
+        super(repository, passwordEncoder, mailSender);
     }
 
     @Override

@@ -2,8 +2,8 @@ package finalproject.finalproject.controller;
 
 import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.operation.Suggestion;
+import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
-import finalproject.finalproject.mapper.CustomerOrderMapper;
 import finalproject.finalproject.mapper.ExpertMapper;
 import finalproject.finalproject.mapper.SuggestionMapper;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
@@ -12,10 +12,12 @@ import finalproject.finalproject.service.dto.response.ExpertDtoResponse;
 import finalproject.finalproject.service.dto.response.SuggestionDtoResponse;
 import finalproject.finalproject.service.impl.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.List;
 
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/expert")
 public class ExpertController {
@@ -32,12 +35,24 @@ public class ExpertController {
     private final SuggestionServiceImpl suggestionService;
 
     @PostMapping("/createExpert")
-    public ResponseEntity<ExpertDtoResponse> createExpert(@RequestBody ExpertDtoRequest dto, HttpServletRequest request) throws IOException {
+    public ResponseEntity<ExpertDtoResponse> createExpert(@RequestBody @Valid ExpertDtoRequest dto, HttpServletRequest request) throws IOException {
         Expert expert = ExpertMapper.INSTANCE.requestDtoToModel(dto);
         String siteURL = request.getRequestURL().toString().replace(request.getRequestURI(), "");
         expertService.createExpert(dto, siteURL);
         ExpertDtoResponse expertDtoResponse = modelMapper.map(expert, ExpertDtoResponse.class);
         return new ResponseEntity<>(expertDtoResponse, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/verify-expert")
+    public ResponseEntity<String> verify(@RequestParam String code) {
+        expertService.verify(code);
+        return new ResponseEntity<>("Email verified successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/see-wallet-credit/{expertId}")
+    public double seeWalletCredit(@PathVariable Integer expertId) {
+        Expert expert = expertService.getReferenceById(expertId);
+        return expertService.seeWalletCredit(expert);
     }
 
     @PutMapping("/average-star/{expertId}")

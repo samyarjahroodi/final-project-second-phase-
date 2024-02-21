@@ -1,6 +1,11 @@
 package finalproject.finalproject.service.impl;
 
+import finalproject.finalproject.Entity.payment.Wallet;
+import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
+import finalproject.finalproject.Entity.user.RegistrationStatus;
+import finalproject.finalproject.Entity.user.Role;
+import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.exception.StatusException;
 import finalproject.finalproject.repository.PersonRepository;
@@ -12,16 +17,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
 public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
         implements PersonService<T> {
+
     protected final R repository;
+
+    protected final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private final JavaMailSender mailSender;
@@ -38,9 +48,8 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
         String randomCode = UUID.randomUUID().toString();
         t.setVerificationCode(randomCode);
         t.setEnabled(false);
-        repository.save(t);
-
         sendVerificationEmail(t, siteURL);
+        repository.save(t);
     }
 
     @Override
@@ -64,15 +73,34 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
     public void verify(String verificationCode) {
         T t = repository.findByVerificationCode(verificationCode);
         if (t == null) {
-            throw new NullInputException("user cannot be null");
-        } else if (!t.isVerified()) {
+            throw new NullInputException("User cannot be null");
+        }
+        if (t instanceof Expert expert) {
+            expert.setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
+            t.setEnabled(true);
+            t.setVerified(true);
+            repository.save(t);
+            return;
+        }
+        if (!t.isVerified()) {
             t.setEnabled(true);
             t.setVerified(true);
             repository.save(t);
         } else {
-            throw new StatusException("you already verified");
+            throw new StatusException("You have already been verified");
         }
     }
+
+    @Override
+    public Optional<T> findByUsername(String username) {
+        return repository.findByUsername(username);
+    }
+
+    @Override
+    public double seeWalletCredit(T t) {
+        return t.getWallet().getCreditOfWallet();
+    }
+
 
     private Specification<T> getUserSpecification(SearchForPerson search) {
         return (root, query, criteriaBuilder) -> {

@@ -1,8 +1,14 @@
 package finalproject.finalproject.service.dto.request;
 
+import finalproject.finalproject.Entity.duty.Duty;
+import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
+import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,10 +27,7 @@ public class SearchForPerson {
 
     Integer star;
 
-    String subDuty;
-
     Role role;
 
     String fieldOfEndeavor;
-
 }

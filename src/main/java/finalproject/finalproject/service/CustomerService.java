@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 @Service
 public interface CustomerService extends BaseService<Customer, Integer> {
@@ -29,6 +30,8 @@ public interface CustomerService extends BaseService<Customer, Integer> {
     void payThePriceOfCustomerOrderByWallet(CustomerOrder customerOrder);
 
     void payThePriceOfCustomerOrderOnline(CustomerOrder customerOrder, Card card);
+
+    List<CustomerOrder> showAllOrders(Customer customer);
 
 
 }
