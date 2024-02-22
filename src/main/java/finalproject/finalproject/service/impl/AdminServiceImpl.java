@@ -2,24 +2,25 @@ package finalproject.finalproject.service.impl;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Admin;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
+import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.DuplicateException;
 import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.repository.AdminRepository;
 import finalproject.finalproject.service.AdminService;
 import finalproject.finalproject.service.SubDutyService;
-import finalproject.finalproject.service.dto.request.DutyDtoRequest;
-import finalproject.finalproject.service.dto.request.SearchForPerson;
-import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
+import finalproject.finalproject.service.dto.request.*;
+import finalproject.finalproject.service.dto.response.ReportForManagerDtoResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
-
 
 
 @AllArgsConstructor
@@ -31,6 +32,7 @@ public class AdminServiceImpl
     private final AdminRepository adminRepository;
     private final ExpertServiceImpl expertService;
     private final SubDutyService subDutyService;
+    private final CustomerOrderServiceImpl customerOrderService;
     private final SearchPersonServiceImpl searchPersonService;
 
 
@@ -195,7 +197,37 @@ public class AdminServiceImpl
 
     @Override
     public Admin save(Admin admin) {
-        return adminRepository.save(admin) ;
+        return adminRepository.save(admin);
+    }
+
+    @Override
+    public List<SubDuty> historyOfSubDutyForCustomerOrExpertForManger(String username) {
+        return subDutyService.historyOfSubDutyForCustomerOrExpert(username);
+    }
+
+    @Override
+    public List<CustomerOrder> giveCustomerOrdersSortedInformationToManager(CustomerOrdersSortedInformationToManagerDtoRequest dto) {
+        return customerOrderService.sortedInformationForManger(dto);
+    }
+
+    @Override
+    public ReportForManagerDtoResponse reportForManagerFromPersons(String username) {
+        ReportForManagerDtoResponse dto = new ReportForManagerDtoResponse();
+        Person person = searchPersonService.findByUsername(username);
+        Role userRole = person.getRole();
+
+        LocalDate creationDate = person.getCreationDate();
+        dto.setCreationDate(creationDate);
+
+        Long countedOfOrders = customerOrderService.countOfOrders(username);
+
+        if (userRole.equals(Role.ROLE_EXPERT)) {
+            dto.setNumberOfOrdersThatAreDoneByExpert(Math.toIntExact(countedOfOrders));
+        } else if (userRole.equals(Role.ROLE_CUSTOMER)) {
+            dto.setNumberOfOrdersByCustomer(Math.toIntExact(countedOfOrders));
+        }
+
+        return dto;
     }
 
 

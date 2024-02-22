@@ -9,22 +9,27 @@ import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
+import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.exception.PriceException;
 import finalproject.finalproject.exception.TimeException;
 import finalproject.finalproject.repository.CustomerOrderRepository;
 import finalproject.finalproject.service.CustomerOrderService;
 import finalproject.finalproject.service.dto.request.CustomerOrderDtoRequest;
+import finalproject.finalproject.service.dto.request.CustomerOrdersSortedInformationToManagerDtoRequest;
+import jakarta.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,13 +40,16 @@ public class CustomerOrderServiceImpl
     private final CustomerServiceImpl customerService;
     private final WalletServiceImpl walletService;
     private final ExpertServiceImpl expertService;
+    private final SearchPersonServiceImpl searchPersonService;
+
 
     @Autowired
-    public CustomerOrderServiceImpl(CustomerOrderRepository customerOrderRepository, @Lazy CustomerServiceImpl customerService, WalletServiceImpl walletService, ExpertServiceImpl expertService) {
+    public CustomerOrderServiceImpl(CustomerOrderRepository customerOrderRepository, @Lazy CustomerServiceImpl customerService, WalletServiceImpl walletService, ExpertServiceImpl expertService, SearchPersonServiceImpl searchPersonService) {
         this.customerOrderRepository = customerOrderRepository;
         this.customerService = customerService;
         this.walletService = walletService;
         this.expertService = expertService;
+        this.searchPersonService = searchPersonService;
     }
 
     @Override
@@ -95,7 +103,61 @@ public class CustomerOrderServiceImpl
 
     @Override
     public List<CustomerOrder> seeCustomerOrderByStatus(Customer customer, Status status) {
-        return customerOrderRepository.seeCustomerOrderByStatus(customer,status);
+        return customerOrderRepository.seeCustomerOrderByStatus(customer, status);
+    }
+
+    @Override
+    public List<CustomerOrder> sortedInformationForManger(CustomerOrdersSortedInformationToManagerDtoRequest dto) {
+        return customerOrderRepository.findAll(findFilteredOrdersForManager(dto));
+    }
+
+    private Specification<CustomerOrder> findFilteredOrdersForManager(CustomerOrdersSortedInformationToManagerDtoRequest dto) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (dto.getStartedDuration() != null && dto.getEndedDuration() != null) {
+                predicates.add(criteriaBuilder.between(root.get("timeOfOrder"), dto.getStartedDuration(), dto.getEndedDuration()));
+            }
+
+            if (dto.getStatus() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), dto.getStatus()));
+            }
+
+            if (dto.getDutyName() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("subDuty").get("duty").get("name"), dto.getDutyName()));
+            }
+
+            if (dto.getSubDutyName() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("subDuty").get("name"), dto.getSubDutyName()));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+
+    public Long countOfOrders(String username) {
+        Specification<CustomerOrder> spec = countOrdersForExpertOrCustomer(username);
+        return customerOrderRepository.count(spec);
+    }
+
+    private Specification<CustomerOrder> countOrdersForExpertOrCustomer(String username) {
+        return (root, query, criteriaBuilder) -> {
+            CriteriaQuery<CustomerOrder> criteriaQuery = criteriaBuilder.createQuery(CustomerOrder.class);
+            Root<CustomerOrder> orderRoot = criteriaQuery.from(CustomerOrder.class);
+
+            Predicate predicate = null;
+            Role userRole = searchPersonService.findByUsername(username).getRole();
+
+            if (userRole.equals(Role.ROLE_EXPERT)) {
+                Join<CustomerOrder, Suggestion> suggestionJoin = root.join("suggestions", JoinType.INNER);
+                predicate = criteriaBuilder.equal(suggestionJoin.get("expert").get("username"), username);
+            } else if (userRole.equals(Role.ROLE_CUSTOMER)) {
+                predicate = criteriaBuilder.equal(root.get("customer").get("username"), username);
+            }
+
+            return predicate;
+        };
     }
 
 

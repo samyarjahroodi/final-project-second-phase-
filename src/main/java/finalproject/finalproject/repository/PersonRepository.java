@@ -12,7 +12,9 @@ public interface PersonRepository<T extends Person>
         extends JpaRepository<T, Integer>, JpaSpecificationExecutor<T> {
 
     @Query("SELECT p FROM Person p WHERE p.username = :username")
-    Optional<T> findByUsername(String username);
+    Optional<T> findByUsernameIfItsExist(String username);
+
+    T findByUsername(String username);
 
     T findByVerificationCode(String verificationCode);
 

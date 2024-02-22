@@ -18,7 +18,9 @@ public interface PersonService<T extends Person> {
 
     void verify(String verificationCode);
 
-    Optional<T> findByUsername(String username);
+    T findByUsername(String username);
+
+    Optional<T> findByUsernameIfExist(String username);
 
     double seeWalletCredit(T t);
 

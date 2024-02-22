@@ -30,8 +30,6 @@ public class Customer extends Person {
     @OneToMany(mappedBy = "customer")
     private List<Card> card;
 
-    private Role role;
-
     public Customer(List<CustomerOrder> orders, List<Card> card) {
         this.orders = orders;
         this.card = card;

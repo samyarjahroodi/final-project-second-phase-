@@ -2,18 +2,17 @@ package finalproject.finalproject.service;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Admin;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
-import finalproject.finalproject.service.dto.request.DutyDtoRequest;
-import finalproject.finalproject.service.dto.request.SearchForPerson;
-import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
+import finalproject.finalproject.service.dto.request.*;
+import finalproject.finalproject.service.dto.response.ReportForManagerDtoResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-
 public interface AdminService {
     Duty createDuty(DutyDtoRequest dto);
 
@@ -44,4 +43,10 @@ public interface AdminService {
     boolean existsByUsername(String name);
 
     Admin save(Admin admin);
+
+    List<SubDuty> historyOfSubDutyForCustomerOrExpertForManger(String username);
+
+    List<CustomerOrder> giveCustomerOrdersSortedInformationToManager(CustomerOrdersSortedInformationToManagerDtoRequest dto);
+
+    ReportForManagerDtoResponse reportForManagerFromPersons(String username);
 }

@@ -8,7 +8,7 @@ import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.service.dto.request.CustomerOrderDtoRequest;
-import org.springframework.data.repository.query.Param;
+import finalproject.finalproject.service.dto.request.CustomerOrdersSortedInformationToManagerDtoRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,4 +27,6 @@ public interface CustomerOrderService extends BaseService<CustomerOrder, Integer
     void reduceStarsOfExpertIfNeeded(CustomerOrder customerOrder);
 
     List<CustomerOrder> seeCustomerOrderByStatus(Customer customer, Status status);
+
+    List<CustomerOrder> sortedInformationForManger(CustomerOrdersSortedInformationToManagerDtoRequest dto);
 }

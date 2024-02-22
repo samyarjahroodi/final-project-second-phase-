@@ -1,10 +1,8 @@
 package finalproject.finalproject.service.impl;
 
-import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
-import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.NotFoundException;
 import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.exception.StatusException;
@@ -92,8 +90,15 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
     }
 
     @Override
-    public Optional<T> findByUsername(String username) {
-        return repository.findByUsername(username);
+    public T findByUsername(String username) {
+        return repository.findByUsernameIfItsExist(username).orElseThrow(
+                () -> new NotFoundException(String.format("USER %s NOT FOUND !", username))
+        );
+    }
+
+    @Override
+    public Optional<T> findByUsernameIfExist(String username) {
+        return Optional.ofNullable(repository.findByUsername(username));
     }
 
     @Override

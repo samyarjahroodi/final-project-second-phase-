@@ -33,7 +33,6 @@ import static finalproject.finalproject.service.validation.ValidateUserDto.valid
 
 @Service
 @Transactional
-
 public class CustomerServiceImpl
         extends PersonServiceImpl<Customer, CustomerRepository>
         implements CustomerService {
@@ -61,7 +60,9 @@ public class CustomerServiceImpl
                 .username(dto.getUsername())
                 .wallet(walletService.save(Wallet.builder().creditOfWallet(0).build()))
                 .role(Role.ROLE_CUSTOMER)
+                .creationDate(LocalDate.now())
                 .build();
+        repository.save(customer);
         register(customer, siteURL);
         return repository.save(customer);
     }

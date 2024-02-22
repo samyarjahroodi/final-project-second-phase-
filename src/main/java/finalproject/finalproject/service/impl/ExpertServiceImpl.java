@@ -65,7 +65,7 @@ public class ExpertServiceImpl
                 .wallet((walletService.save(Wallet.builder().creditOfWallet(0).build())))
                 .role(Role.ROLE_EXPERT)
                 .registrationStatus(NEW)
-                .whenExpertRegistered(LocalDate.now())
+                .creationDate(LocalDate.now())
                 .image(setImageForExpert(dto.getPathName()))
                 .fieldOfEndeavor(dto.getFieldOfEndeavor())
                 .build();

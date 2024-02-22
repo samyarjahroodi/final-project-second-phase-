@@ -25,7 +25,7 @@ public class Expert extends Person {
 
     //when expert is registered!!
     @Column(name = "when_expert_registered")
-    private LocalDate whenExpertRegistered;
+    private LocalDate whenExpertRegistrationStatusChangedToAccepted;
 
     //image of the expert!!
     @Column(name = "image_of_expert", columnDefinition = "bytea")
@@ -39,5 +39,4 @@ public class Expert extends Person {
 
     private String fieldOfEndeavor;
 
-    private Role role;
 }

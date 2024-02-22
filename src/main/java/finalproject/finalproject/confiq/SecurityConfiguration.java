@@ -46,7 +46,7 @@ public class SecurityConfiguration {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService((username) -> personService
-                        .findByUsername(username)
+                        .findByUsernameIfExist(username)
                         .orElseThrow(() -> new NotFoundException(String.format("This %s notFound!", username))))
                 .passwordEncoder(passwordEncoder);
     }

@@ -84,7 +84,7 @@ public class BaseTest {
                 .role(Role.ROLE_EXPERT)
                 .build();
         expert.setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
-        expert.setWhenExpertRegistered(LocalDate.now());
+        expert.setWhenExpertRegistrationStatusChangedToAccepted(LocalDate.now());
         expertRepository.save(expert);
         return expert;
     }
@@ -115,7 +115,7 @@ public class BaseTest {
                 .image(expertService.setImageForExpert(imagePath))
                 .build();
         expert.setRegistrationStatus(RegistrationStatus.ACCEPTED);
-        expert.setWhenExpertRegistered(LocalDate.now());
+        expert.setWhenExpertRegistrationStatusChangedToAccepted(LocalDate.now());
         expertRepository.save(expert);
         return expert;
     }

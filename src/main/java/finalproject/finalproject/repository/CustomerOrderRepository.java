@@ -7,6 +7,7 @@ import finalproject.finalproject.Entity.operation.Suggestion;
 import finalproject.finalproject.Entity.user.Customer;
 import finalproject.finalproject.Entity.user.Expert;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @Repository
 public interface CustomerOrderRepository
-        extends JpaRepository<CustomerOrder, Integer> {
+        extends JpaRepository<CustomerOrder, Integer>, JpaSpecificationExecutor<CustomerOrder> {
 
     @Query("SELECT co FROM CustomerOrder co " +
             "WHERE :expert MEMBER OF co.subDuty.experts " +

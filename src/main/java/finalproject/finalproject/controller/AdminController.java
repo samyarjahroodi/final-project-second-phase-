@@ -2,14 +2,17 @@ package finalproject.finalproject.controller;
 
 import finalproject.finalproject.Entity.duty.Duty;
 import finalproject.finalproject.Entity.duty.SubDuty;
+import finalproject.finalproject.Entity.operation.CustomerOrder;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.mapper.DutyMapper;
 import finalproject.finalproject.mapper.SubDutyMapper;
+import finalproject.finalproject.service.dto.request.CustomerOrdersSortedInformationToManagerDtoRequest;
 import finalproject.finalproject.service.dto.request.DutyDtoRequest;
 import finalproject.finalproject.service.dto.request.SearchForPerson;
 import finalproject.finalproject.service.dto.request.SubDutyDtoRequest;
 import finalproject.finalproject.service.dto.response.DutyDtoResponse;
+import finalproject.finalproject.service.dto.response.ReportForManagerDtoResponse;
 import finalproject.finalproject.service.dto.response.SubDutyDtoResponse;
 import finalproject.finalproject.service.impl.AdminServiceImpl;
 import finalproject.finalproject.service.impl.DutyServiceImpl;
@@ -132,6 +135,21 @@ public class AdminController {
     public List<SubDuty> showSubDutiesOfSpecificDuty(@PathVariable Integer dutyId) {
         Duty dutyById = dutyService.getReferenceById(dutyId);
         return dutyService.showSubDutiesOfSpecificDuty(dutyById);
+    }
+
+    @GetMapping("/history-Of-SubDuty-For-Customer-Or-Expert-For-Manger")
+    public List<SubDuty> historyOfSubDutyForCustomerOrExpertForManger(@RequestParam String username) {
+        return adminService.historyOfSubDutyForCustomerOrExpertForManger(username);
+    }
+
+    @GetMapping("/give-Customer-Orders-Sorted-Information-To-Manager")
+    public List<CustomerOrder> giveCustomerOrdersSortedInformationToManager(@RequestBody CustomerOrdersSortedInformationToManagerDtoRequest dto) {
+        return adminService.giveCustomerOrdersSortedInformationToManager(dto);
+    }
+
+    @GetMapping("/report-For-Manager-From-Persons")
+    public ReportForManagerDtoResponse reportForManagerFromPersons(@RequestParam String username) {
+        return adminService.reportForManagerFromPersons(username);
     }
 
 }
