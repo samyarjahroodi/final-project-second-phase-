@@ -108,10 +108,10 @@ public class CustomerOrderServiceImpl
 
     @Override
     public List<CustomerOrder> sortedInformationForManger(CustomerOrdersSortedInformationToManagerDtoRequest dto) {
-        return customerOrderRepository.findAll(findFilteredOrdersForManager(dto));
+        return customerOrderRepository.findAll(findSortedOrdersForManager(dto));
     }
 
-    private Specification<CustomerOrder> findFilteredOrdersForManager(CustomerOrdersSortedInformationToManagerDtoRequest dto) {
+    private Specification<CustomerOrder> findSortedOrdersForManager(CustomerOrdersSortedInformationToManagerDtoRequest dto) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
