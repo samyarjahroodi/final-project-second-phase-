@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(a -> a
                         .requestMatchers("/customer/create-Customer").permitAll()
                         .requestMatchers("/expert/createExpert").permitAll()
+                        .requestMatchers("customer/payment").permitAll()
                         .requestMatchers("admin/**").hasRole("ADMIN")
                         .requestMatchers("customer/**").hasAnyRole("CUSTOMER")
                         .requestMatchers("expert/**").hasRole("EXPERT")
