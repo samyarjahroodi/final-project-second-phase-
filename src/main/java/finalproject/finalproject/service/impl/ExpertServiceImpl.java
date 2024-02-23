@@ -9,6 +9,7 @@ import finalproject.finalproject.Entity.user.RegistrationStatus;
 import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.NotValidSizeException;
 import finalproject.finalproject.exception.NullInputException;
+import finalproject.finalproject.repository.ConfirmationTokenRepository;
 import finalproject.finalproject.repository.ExpertRepository;
 import finalproject.finalproject.service.ExpertService;
 import finalproject.finalproject.service.dto.request.ExpertDtoRequest;
@@ -45,11 +46,11 @@ public class ExpertServiceImpl
     private final SubDutyServiceImpl subDutyService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public ExpertServiceImpl(ExpertRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService, BCryptPasswordEncoder passwordEncoder) {
-        super(repository, passwordEncoder, mailSender);
+    public ExpertServiceImpl(ExpertRepository repository, BCryptPasswordEncoder passwordEncoder, ConfirmationTokenRepository confirmationTokenRepository, EmailServiceImpl emailService, JavaMailSender mailSender, WalletServiceImpl walletService, SubDutyServiceImpl subDutyService, BCryptPasswordEncoder passwordEncoder1) {
+        super(repository, passwordEncoder, confirmationTokenRepository, emailService, mailSender);
         this.walletService = walletService;
         this.subDutyService = subDutyService;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder1;
     }
 
 
@@ -69,8 +70,9 @@ public class ExpertServiceImpl
                 .image(setImageForExpert(dto.getPathName()))
                 .fieldOfEndeavor(dto.getFieldOfEndeavor())
                 .build();
-        register(expert, siteURL);
-        return repository.save(expert);
+        Expert save = repository.save(expert);
+        sendEmail(dto.getEmail());
+        return save;
     }
 
 

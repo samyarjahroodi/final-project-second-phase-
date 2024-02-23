@@ -58,11 +58,6 @@ public class CustomerController {
         return customerService.seeWalletCredit(customer);
     }
 
-    @GetMapping("/verify-customer")
-    public ResponseEntity<String> verify(@RequestParam String code) {
-        customerService.verify(code);
-        return new ResponseEntity<>("Email verified successfully", HttpStatus.OK);
-    }
 
 
     @GetMapping("/get-orders/{customerId}")

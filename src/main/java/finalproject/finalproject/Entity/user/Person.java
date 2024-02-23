@@ -52,7 +52,8 @@ public class Person extends BaseEntity<Integer> implements UserDetails {
     @OneToOne
     private Wallet wallet;
 
-    private boolean isVerified;
+
+    private boolean isVerified = false;
 
 
     @Override

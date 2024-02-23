@@ -20,4 +20,6 @@ public interface PersonRepository<T extends Person>
 
     boolean existsByUsername(String username);
 
+    Optional<T> findByEmail(String email);
+
 }

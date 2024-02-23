@@ -1,11 +1,12 @@
 package finalproject.finalproject.service.impl;
 
+import finalproject.finalproject.Entity.operation.ConfirmationToken;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Person;
 import finalproject.finalproject.Entity.user.RegistrationStatus;
 import finalproject.finalproject.exception.NotFoundException;
-import finalproject.finalproject.exception.NullInputException;
 import finalproject.finalproject.exception.StatusException;
+import finalproject.finalproject.repository.ConfirmationTokenRepository;
 import finalproject.finalproject.repository.PersonRepository;
 import finalproject.finalproject.service.PersonService;
 import finalproject.finalproject.service.dto.request.SearchForPerson;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Transactional
@@ -30,6 +30,10 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
     protected final R repository;
 
     protected final BCryptPasswordEncoder passwordEncoder;
+
+    protected final ConfirmationTokenRepository confirmationTokenRepository;
+
+    protected final EmailServiceImpl emailService;
 
     @Autowired
     private final JavaMailSender mailSender;
@@ -41,53 +45,6 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
         );
     }
 
-    @Override
-    public void register(T t, String siteURL) {
-        String randomCode = UUID.randomUUID().toString();
-        t.setVerificationCode(randomCode);
-        t.setEnabled(false);
-        sendVerificationEmail(t, siteURL);
-        repository.save(t);
-    }
-
-    @Override
-    public void sendVerificationEmail(T t, String siteURL) {
-        String toAddress = t.getEmail();
-        String fromAddress = "jahroodi.com";
-        String subject = "Please verify your email address";
-        String confirmationUrl = siteURL + "/verify?code=" + t.getVerificationCode();
-        String message = "To verify your email address, please click the link below:\n" + confirmationUrl;
-
-        SimpleMailMessage email = new SimpleMailMessage();
-        email.setTo(toAddress);
-        email.setSubject(subject);
-        email.setText(message);
-        email.setFrom(fromAddress);
-
-        mailSender.send(email);
-    }
-
-    @Override
-    public void verify(String verificationCode) {
-        T t = repository.findByVerificationCode(verificationCode);
-        if (t == null) {
-            throw new NullInputException("User cannot be null");
-        }
-        if (t instanceof Expert expert) {
-            expert.setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
-            t.setEnabled(true);
-            t.setVerified(true);
-            repository.save(t);
-            return;
-        }
-        if (!t.isVerified()) {
-            t.setEnabled(true);
-            t.setVerified(true);
-            repository.save(t);
-        } else {
-            throw new StatusException("You have already been verified");
-        }
-    }
 
     @Override
     public T findByUsername(String username) {
@@ -104,6 +61,11 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
     @Override
     public double seeWalletCredit(T t) {
         return t.getWallet().getCreditOfWallet();
+    }
+
+    @Override
+    public T findUserByEmail(String emailAddress) {
+        return repository.findByEmail(emailAddress).orElse(null);
     }
 
 
@@ -144,5 +106,48 @@ public class PersonServiceImpl<T extends Person, R extends PersonRepository<T>>
 
             return predicate;
         };
+    }
+
+    public void sendEmail(String emailAddress) {
+        T user = repository.findByEmail(emailAddress).orElse(null);
+
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
+        user.setVerificationCode(confirmationToken.getConfirmationToken());
+        confirmationTokenRepository.save(confirmationToken);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("samyarghasemjahroodi@gmail.com");
+        mailMessage.setTo(emailAddress);
+        mailMessage.setSubject("Hoorah!");
+        mailMessage.setText("please click here : "
+                + "http://localhost:8080/confirm-account?token=" + confirmationToken.getConfirmationToken());
+
+        emailService.sendEmail(mailMessage);
+
+    }
+
+
+    public void verifyEmail(String confirmationToken) {
+
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+        if (token != null) {
+            T user = repository.findByEmail(token.getPerson().getEmail()).orElse(null);
+            if (user.isVerified()) {
+                throw new StatusException("you have already verified");
+            }
+            if (user instanceof Expert) {
+                ((Expert) user).setRegistrationStatus(RegistrationStatus.AWAITING_CONFIRMATION);
+                user.setVerified(true);
+                user.setEnabled(true);
+                repository.save(user);
+                return;
+            }
+            user.setVerified(true);
+            user.setEnabled(true);
+            repository.save(user);
+        } else {
+            throw new StatusException("EMAIL DIDNT CONFIRMED");
+        }
     }
 }

@@ -12,16 +12,20 @@ import java.util.Optional;
 public interface PersonService<T extends Person> {
     List<T> search(SearchForPerson search);
 
-    void register(T t, String siteURL);
+/*    void register(T t, String siteURL);
 
-    void sendVerificationEmail(T t, String siteURL);
+    void sendVerificationEmail(T t, String siteURL);*/
 
-    void verify(String verificationCode);
+  /*  void verify(String verificationCode);*/
 
     T findByUsername(String username);
 
     Optional<T> findByUsernameIfExist(String username);
 
     double seeWalletCredit(T t);
+
+    T findUserByEmail(String emailAddress);
+
+    void verifyEmail(String confirmationToken);
 
 }

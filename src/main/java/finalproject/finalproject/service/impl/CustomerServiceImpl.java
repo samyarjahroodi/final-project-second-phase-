@@ -10,6 +10,7 @@ import finalproject.finalproject.Entity.payment.Wallet;
 import finalproject.finalproject.Entity.user.Expert;
 import finalproject.finalproject.Entity.user.Role;
 import finalproject.finalproject.exception.*;
+import finalproject.finalproject.repository.ConfirmationTokenRepository;
 import finalproject.finalproject.repository.CustomerRepository;
 import finalproject.finalproject.service.CustomerService;
 import finalproject.finalproject.service.dto.request.UserDtoRequest;
@@ -42,13 +43,14 @@ public class CustomerServiceImpl
     private final ExpertServiceImpl expertService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public CustomerServiceImpl(CustomerRepository repository, JavaMailSender mailSender, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService, BCryptPasswordEncoder passwordEncoder) {
-        super(repository, passwordEncoder, mailSender);
+    public CustomerServiceImpl(CustomerRepository repository, BCryptPasswordEncoder passwordEncoder, ConfirmationTokenRepository confirmationTokenRepository, EmailServiceImpl emailService, JavaMailSender mailSender, WalletServiceImpl walletService, CustomerOrderServiceImpl customerOrderService, ExpertServiceImpl expertService, BCryptPasswordEncoder passwordEncoder1) {
+        super(repository, passwordEncoder, confirmationTokenRepository, emailService, mailSender);
         this.walletService = walletService;
         this.customerOrderService = customerOrderService;
         this.expertService = expertService;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordEncoder = passwordEncoder1;
     }
+
 
     public Customer createCustomer(UserDtoRequest dto, String siteURL) throws MessagingException {
         validateUserDtoRequest(dto);
@@ -62,9 +64,9 @@ public class CustomerServiceImpl
                 .role(Role.ROLE_CUSTOMER)
                 .creationDate(LocalDate.now())
                 .build();
-        repository.save(customer);
-        register(customer, siteURL);
-        return repository.save(customer);
+        Customer save = repository.save(customer);
+        sendEmail(dto.getEmail());
+        return save;
     }
 
 

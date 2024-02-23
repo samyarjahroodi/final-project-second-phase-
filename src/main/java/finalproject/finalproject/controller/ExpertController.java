@@ -43,12 +43,6 @@ public class ExpertController {
         return new ResponseEntity<>(expertDtoResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/verify-expert")
-    public ResponseEntity<String> verify(@RequestParam String code) {
-        expertService.verify(code);
-        return new ResponseEntity<>("Email verified successfully", HttpStatus.OK);
-    }
-
     @GetMapping("/see-wallet-credit/{expertId}")
     public double seeWalletCredit(@PathVariable Integer expertId) {
         Expert expert = expertService.getReferenceById(expertId);
